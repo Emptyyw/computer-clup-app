@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
 import classes from './ActionToggle.module.css';
-import { colorScheme } from '../../../Enum/Enum';
+import { colorScheme } from 'Enum/Enum';
 
 export function ActionToggle() {
   const { setColorScheme } = useMantineColorScheme();
@@ -21,7 +21,7 @@ export function ActionToggle() {
   };
 
   return (
-    <Group className={cx(classes.group)} justify="end">
+    <Group justify="end">
       <ActionIcon
         onClick={toggleColorScheme}
         variant="default"

@@ -1,21 +1,25 @@
 import './App.css';
-import { Text } from '@mantine/core';
-import { ActionToggle } from './components/shared/ActionToggle/ActionToggle';
+import { Text, Container, Group } from '@mantine/core';
+import { ActionToggle } from 'components/shared/ActionToggle/ActionToggle';
 import '@mantine/core/styles.css';
 import './components//18next/i18n';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from '../src/components/18next/LanguageSwitcher';
+import LanguageSwitcher from 'components/shared/LanguageSwitcher/LanguageSwitcher';
 
-function App() {
+const App = () => {
   const { t } = useTranslation();
 
   return (
-    <div>
-      <ActionToggle />
-      <Text>{t('Hello')}</Text>
-      <LanguageSwitcher />
-    </div>
+    <>
+      <Container>
+        <Group justify="flex-end">
+          <ActionToggle />
+          <LanguageSwitcher />
+        </Group>
+        <Text>{t('Hello')}</Text>
+      </Container>
+    </>
   );
-}
+};
 
 export default App;
