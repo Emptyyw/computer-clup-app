@@ -1,24 +1,25 @@
 import './App.css';
-import { Text, Container, Group } from '@mantine/core';
-import { ActionToggle } from 'components/shared/ActionToggle/ActionToggle';
+import { Container } from '@mantine/core';
 import '@mantine/core/styles.css';
 import './components//18next/i18n';
-import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from 'components/shared/LanguageSwitcher/LanguageSwitcher';
+import { AuthenticationForm } from 'components/Auth/AuthForm';
+import { HeaderMenu } from 'layout/header/Header';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from 'components/dashboard';
+import 'firebase/firebase';
 
 const App = () => {
-  const { t } = useTranslation();
-
   return (
-    <>
+    <Router>
+      <HeaderMenu />
       <Container>
-        <Group justify="flex-end">
-          <ActionToggle />
-          <LanguageSwitcher />
-        </Group>
-        <Text>{t('Hello')}</Text>
+        <Routes>
+          <Route path="/login" element={<AuthenticationForm type="login" />} />
+          <Route path="/register" element={<AuthenticationForm type="register" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
       </Container>
-    </>
+    </Router>
   );
 };
 

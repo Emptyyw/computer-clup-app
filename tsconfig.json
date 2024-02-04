@@ -9,16 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "paths": {
-      "components/*": ["./components/*"],
-      "Enum/*": ["./Enum/*"],
-      "hooks/*": ["./hooks/*"],
-      "pages/*": ["./pages/*"],
-      "styles/*": ["./styles/*"],
-      "types/*": ["./types/*"],
-      "utils/*": ["./utils/*"],
-    },
+    "baseUrl": "src",
 
     /* Bundler mode */
     "moduleResolution": "bundler",

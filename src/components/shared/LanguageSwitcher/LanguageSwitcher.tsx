@@ -17,7 +17,7 @@ function LanguageSwitcher() {
   };
 
   return (
-    <Group justify="end">
+    <Group>
       <ActionIcon
         onClick={changeLanguage}
         variant="default"

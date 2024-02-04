@@ -2,18 +2,21 @@ import ReactDOM from 'react-dom/client';
 import App from 'App.tsx';
 import './index.css';
 import { MantineProvider, createTheme, MantineColorsTuple } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { store } from 'store/store';
+import { Provider } from 'react-redux';
 
 const myColor: MantineColorsTuple = [
-  '#f6ecff',
-  '#e7d6fb',
-  '#caabf1',
-  '#ac7ce8',
-  '#9354e0',
-  '#833cdb',
-  '#7b2eda',
-  '#6921c2',
-  '#5d1cae',
-  '#501599',
+  '#e4fffe',
+  '#d0fffa',
+  '#a1fef5',
+  '#6ffef0',
+  '#4dfeeb',
+  '#3cfee8',
+  '#30fee7',
+  '#21e2cd',
+  '#00c9b6',
+  '#00ae9c',
 ];
 
 const theme = createTheme({
@@ -26,6 +29,10 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <MantineProvider theme={theme}>
-    <App />
+    <ModalsProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </ModalsProvider>
   </MantineProvider>,
 );

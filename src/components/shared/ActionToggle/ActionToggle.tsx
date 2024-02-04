@@ -21,7 +21,7 @@ export function ActionToggle() {
   };
 
   return (
-    <Group justify="end">
+    <Group>
       <ActionIcon
         onClick={toggleColorScheme}
         variant="default"
