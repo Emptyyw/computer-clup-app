@@ -1,53 +1,116 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface UserState {
-  login: string | null;
-  email: string | null;
-  token: string | null;
-  id: string | null;
+import { handleRegister, saveUserToDb, authorizationUser } from 'api/db';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { authWithGoogle } from 'api/db';
+export interface UserState {
+  login: string;
+  email: string;
+  password: string;
+  id?: string;
   role?: string;
+  token: string;
+  isAuthenticated?: boolean;
+}
+export interface UserResponse {
+  login: string;
+  email: string;
+  token: string;
+  id: string;
   isAuthenticated?: boolean;
 }
 
 const initialState: UserState = {
-  login: null,
-  email: null,
-  token: null,
-  id: null,
+  login: '',
+  email: '',
+  password: '',
+  token: '',
+  id: '',
   role: undefined,
   isAuthenticated: undefined,
 };
 
+export const registerUser = createAsyncThunk(
+  'user/registerUser',
+  async ({ email, password, login }: UserState) => {
+    const userCredential = await handleRegister(email, password);
+    const user = {
+      login,
+      email,
+      token: userCredential.user.refreshToken,
+      id: userCredential.user.uid,
+      password: '',
+      role: '',
+      isAuthenticated: true,
+    };
+    await saveUserToDb(user);
+    return user;
+  },
+);
+
+export const loginUser = createAsyncThunk(
+  'user/loginUser',
+  async ({ email, password }: UserState, thunkAPI) => {
+    try {
+      const user = await authorizationUser(email, password);
+      return user;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
+export const signInWithGoogle = createAsyncThunk(
+  'user/signInWithGoogle',
+  async (_, thunkAPI) => {
+    try {
+      const result = await authWithGoogle();
+      const user = {
+        login: result.user.displayName,
+        email: result.user.email,
+        token: result.user.refreshToken,
+        id: result.user.uid,
+      };
+      return user;
+    } catch (error) {
+      if (error instanceof Error) {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occurred');
+    }
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    setUser(state, action: PayloadAction<UserState>) {
-      state.login = action.payload.login;
+  reducers: {},
+  extraReducers: builder => {
+    builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<UserState>) => {
       state.email = action.payload.email;
+      state.password = action.payload.password;
+      state.login = action.payload.login;
       state.token = action.payload.token;
       state.id = action.payload.id;
-      state.isAuthenticated = !!action.payload.token;
-    },
-    setRole(state, action: PayloadAction<string>) {
-      state.role = action.payload;
-    },
-    setAdminRole(state, action: PayloadAction<string>) {
-      state.role = action.payload;
-    },
-    removeUser(state) {
-      state.login = null;
-      state.email = null;
-      state.token = null;
-      state.id = null;
-      state.isAuthenticated = false;
-    },
-    setLogin(state, action: PayloadAction<string>) {
-      state.login = action.payload;
-    },
+    });
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      if (action.payload.email !== null) {
+        state.email = action.payload.email;
+      }
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(signInWithGoogle.fulfilled, (state, action) => {
+      if (action.payload.email !== null) {
+        state.email = action.payload.email;
+      }
+      state.token = action.payload.token;
+      if (action.payload.login !== null) {
+        state.login = action.payload.login;
+      }
+      state.id = action.payload.id;
+      state.isAuthenticated = true;
+    });
   },
 });
-
-export const { setRole, setAdminRole, setUser, removeUser } = userSlice.actions;
 
 export default userSlice.reducer;

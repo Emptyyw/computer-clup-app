@@ -1,13 +1,22 @@
-import { useAuth } from 'hooks/use-auth';
-import React from 'react';
+import { useAuth } from 'hooks/useAuth';
+import { Text } from '@mantine/core';
 
 const Dashboard = () => {
-  const { login } = useAuth();
+  const user = useAuth();
+  const isAuthenticated = !!user.token;
 
   return (
-    <div>
-      <h1>Hello! {login} Welcome to the dashboard!</h1>
-    </div>
+    <>
+      {isAuthenticated ? (
+        <Text size="xl" fw={700}>
+          Привет, {user.login}!
+        </Text>
+      ) : (
+        <Text size="xl" fw={700}>
+          Пожалуйста, войдите в систему.
+        </Text>
+      )}
+    </>
   );
 };
 

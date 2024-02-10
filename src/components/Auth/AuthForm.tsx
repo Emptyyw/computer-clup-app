@@ -6,7 +6,6 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
   Divider,
   Checkbox,
@@ -17,23 +16,28 @@ import {
 import { useTranslation } from 'react-i18next';
 import { GoogleButton } from 'components/shared/AuthButton/GoogleButton';
 import { GitHubButton } from 'components/shared/AuthButton/GitHubButton';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  signInWithEmailAndPassword,
-} from '@firebase/auth';
-import { setRole, setUser } from 'redux/slice/userSlice';
-import { useDispatch } from 'react-redux';
+import { registerUser, loginUser } from 'redux/slice/userSlice';
+import { useAppDispatch } from 'store/store';
+import { Paths } from 'Enum/Enum';
+import { UserState } from 'redux/slice/userSlice';
 
-interface AuthenticationFormProps extends PaperProps {
+interface Props {
   type: 'login' | 'register';
 }
-export function AuthenticationForm({
-  type: formType,
-  ...props
-}: AuthenticationFormProps) {
+
+interface LoginValues {
+  login: string;
+  email: string;
+  password: string;
+  id?: string;
+  token?: string;
+}
+
+const currentDashboard = Paths.Dashboard;
+
+export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [type, setType] = useState(formType);
@@ -58,48 +62,33 @@ export function AuthenticationForm({
     },
   });
 
-  const dispatch = useDispatch();
-
-  const handleRegister = event => {
-    event.preventDefault();
-    const auth = getAuth();
-    const email = form.values.email;
-    const password = form.values.password;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        console.log(userCredential);
-        dispatch(setRole('user'));
-        dispatch(
-          setUser({
-            login: form.values.login,
-            email,
-            token: userCredential.user.refreshToken,
-            id: userCredential.user.uid,
-          }),
-        );
-        navigate('/dashboard');
-      })
-      .catch(console.error);
+  const dispatch = useAppDispatch();
+  const navigateToDashboard = () => {
+    navigate(currentDashboard);
   };
-  const handleLogin = event => {
-    event.preventDefault();
-    const auth = getAuth();
-    const email = form.values.email;
-    const password = form.values.password;
-    signInWithEmailAndPassword(auth, email, password)
-      .then(userCredential => {
-        console.log(userCredential);
-        dispatch(
-          setUser({
-            login: form.values.login,
-            email,
-            token: userCredential.user.refreshToken,
-            id: userCredential.user.uid,
-          }),
-        );
-        navigate('/dashboard');
-      })
-      .catch(console.error);
+
+  const onLogin = (values: LoginValues) => {
+    const valuesWithToken: UserState = {
+      ...values,
+      token: values.token || 'defaultToken',
+    };
+    dispatch(loginUser(valuesWithToken)).then(() => navigateToDashboard());
+  };
+
+  const onRegister = (values: LoginValues) => {
+    const valuesWithToken: UserState = {
+      ...values,
+      token: values.token || 'defaultToken',
+    };
+    dispatch(registerUser(valuesWithToken)).then(() => navigateToDashboard());
+  };
+
+  const onSubmitSuccess: (values: LoginValues) => void = values => {
+    if (type === 'login') {
+      onLogin(values);
+    } else {
+      onRegister(values);
+    }
   };
 
   const handleToggleClick = () => {
@@ -109,6 +98,7 @@ export function AuthenticationForm({
       navigate('/login');
     }
   };
+
   return (
     <Container m="xl">
       <Paper radius="md" p="xl" withBorder {...props}>
@@ -122,45 +112,45 @@ export function AuthenticationForm({
 
         <Divider label={t('Or continue with email')} labelPosition="center" my="lg" />
 
-        <form onSubmit={type === 'login' ? handleLogin : handleRegister}>
+        <form onSubmit={form.onSubmit(onSubmitSuccess)}>
           <Stack>
             {type === 'register' && (
               <TextInput
                 label={t('Name')}
                 placeholder={t('Your name')}
                 value={form.values.name}
-                onChange={event => form.setFieldValue('name', event.currentTarget.value)}
+                {...form.getInputProps('name')}
                 radius="md"
               />
             )}
             <TextInput
               required
               label={t('Login')}
-              placeholder="Your login"
+              placeholder={t('Your login')}
               value={form.values.login}
-              onChange={event => form.setFieldValue('login', event.currentTarget.value)}
+              {...form.getInputProps('login')}
               error={form.errors.login && 'Invalid login'}
               radius="md"
             />
 
-            <TextInput
-              required
-              label={t('Email')}
-              placeholder="hello@mantine.dev"
-              value={form.values.email}
-              onChange={event => form.setFieldValue('email', event.currentTarget.value)}
-              error={form.errors.email && 'Invalid email'}
-              radius="md"
-            />
+            {type === 'register' && (
+              <TextInput
+                required
+                label={t('Email')}
+                placeholder="hello@mantine.dev"
+                value={form.values.email}
+                {...form.getInputProps('email')}
+                error={form.errors.email && 'Invalid email'}
+                radius="md"
+              />
+            )}
 
             <PasswordInput
               required
               label={t('Password')}
               placeholder={t('Your password')}
               value={form.values.password}
-              onChange={event =>
-                form.setFieldValue('password', event.currentTarget.value)
-              }
+              {...form.getInputProps('password')}
               error={
                 form.errors.password && t('Password should include at least 6 characters')
               }
@@ -177,7 +167,6 @@ export function AuthenticationForm({
               />
             )}
           </Stack>
-
           <Group justify="space-between" mt="xl">
             <Anchor
               component="button"
@@ -198,4 +187,4 @@ export function AuthenticationForm({
       </Paper>
     </Container>
   );
-}
+};

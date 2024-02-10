@@ -4,15 +4,14 @@ import LanguageSwitcher from 'components/shared/LanguageSwitcher/LanguageSwitche
 import classes from './Header.module.css';
 import logo from 'assets/logo/shuriken.png';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { removeUser } from 'redux/slice/userSlice';
-import { useAuth } from 'hooks/use-auth';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from 'hooks/useAuth';
 
 export function HeaderMenu() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { isAuthenticated, email } = useAuth();
+  const { t } = useTranslation();
+  const user = useAuth();
+  const isAuthenticated = !!user.token;
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -22,7 +21,6 @@ export function HeaderMenu() {
     navigate('/register');
   };
   const handleLogoutClick = () => {
-    dispatch(removeUser());
     navigate('/login');
   };
 
@@ -35,16 +33,17 @@ export function HeaderMenu() {
         </Group>
 
         <Group justify="center">
-          {isAuthenticated ? (
-            <>
-              <Button onClick={handleLogoutClick}>Log out from</Button>
-              <h3>{email}</h3>
-            </>
+          {!isAuthenticated ? (
+            <Group justify="center">
+              <Button onClick={handleSignupClick}>{t('Sign up')}</Button>
+              <Button onClick={handleLoginClick} variant="default">
+                {t('Log in')}
+              </Button>
+            </Group>
           ) : (
             <Group justify="center">
-              <Button onClick={handleSignupClick}>Sign up</Button>
-              <Button onClick={handleLoginClick} variant="default">
-                Log in
+              <Button onClick={handleLogoutClick} variant="default">
+                {t('Log out')}
               </Button>
             </Group>
           )}
