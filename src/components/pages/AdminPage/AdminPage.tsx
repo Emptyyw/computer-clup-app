@@ -8,7 +8,7 @@ const Dashboard = () => {
     <>
       {auth.user && (
         <Text size="xl" fw={700}>
-          Это панель дэшборд, привет {auth.user.login}!
+          Это панель администратора, привет {auth.user.login}!
         </Text>
       )}
     </>

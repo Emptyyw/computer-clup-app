@@ -1,25 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import { modals } from '@mantine/modals';
 import { TextInput, Button, ButtonProps } from '@mantine/core';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import { GoogleIcon } from './GoogleIcon';
-import { signInWithGoogle } from 'redux/slice/userSlice';
+import { authGoogle, updateLogin } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
-import { Paths } from 'Enum/Enum';
 import { useTranslation } from 'react-i18next';
+import { DASHBOARD_ROUTE } from 'utils/constsRoutes';
+import { User } from 'api/db';
 
 type Props = ButtonProps;
-const currentDashboard = Paths.Dashboard;
 
 export const GoogleButton: FC<Props> = props => {
+  const loginRef = useRef('');
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const handleSignInWithGoogle = async () => {
-    try {
-      await dispatch(signInWithGoogle());
-
+    const actionResult = await dispatch(authGoogle(loginRef.current));
+    const user = actionResult.payload as User;
+    if (!user.login) {
       modals.open({
         title: t('Enter your login'),
         children: (
@@ -27,22 +28,32 @@ export const GoogleButton: FC<Props> = props => {
             <TextInput
               placeholder={t('Your login')}
               data-autofocus
-              onChange={event => event.currentTarget.value}
+              onChange={event => (loginRef.current = event.currentTarget.value)}
             />
-            <Button fullWidth onClick={handleSubmitLogin} mt="md">
+            <Button fullWidth onClick={() => handleSubmitLogin(user)} mt="md">
               {t('Submit')}
             </Button>
           </>
         ),
       });
-    } catch (error) {
-      error;
+    } else {
+      navigate(DASHBOARD_ROUTE);
     }
   };
 
-  const handleSubmitLogin = () => {
-    modals.closeAll();
-    navigate(currentDashboard);
+  const handleSubmitLogin = async (user: User) => {
+    const newLogin = loginRef.current;
+    if (newLogin && user) {
+      try {
+        await dispatch(updateLogin({ user: user, newLogin: newLogin }));
+        modals.closeAll();
+        navigate(DASHBOARD_ROUTE);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error('Login is required');
+    }
   };
 
   return (

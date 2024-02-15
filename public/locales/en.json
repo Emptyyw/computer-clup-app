@@ -1,0 +1,63 @@
+{
+  "app": {
+    "title": "A modern App",
+    "subtitle": "Club Automation"
+  },
+  "homePage": {
+    "description": "Automating computer clubs ensures efficient resource management and enhances customer service quality by creating a comfortable and modern gaming environment.",
+    "listItem1": "Expertise in automation",
+    "listItem1Description": "We have been working with computer clubs",
+    "listItem2": "User experience",
+    "listItem2Description": "We focus on creating the best user experience",
+    "listItem3": "Reliability and support",
+    "listItem3Description": "We provide 24/7 support and ensure that the system is always up and running",
+    "getStartedButton": "Get started",
+    "googleAuthorizationButton": "Google authorization"
+  },
+  "loginPage": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "forgotPassword": "Forgot password?",
+    "orContinueWithEmail": "Or continue with email",
+    "createAccount": "Create account",
+    "googleButton": "Continue with Google"
+  },
+  "authForm": {
+    "Hello": "Hello",
+    "Welcome": "Welcome",
+    "Login": "Login",
+    "Name": "Name",
+    "Email": "Email",
+    "Password": "Password",
+    "Create Account": "Create Account",
+    "Already have an account? Login": "Already have an account? Login",
+    "Sign In": "Sign In",
+    "Forgot Password?": "Forgot Password?",
+    "Continue with Google": "Continue with Google",
+    "Your name": "Your name",
+    "I accept terms and conditions": "I accept terms and conditions",
+    "Don't have an account? Register": "Don't have an account? Register",
+    "Your password": "Your password",
+    "Your email": "Your email",
+    "Your password again": "Your password again",
+    "Google Button Text": "Continue with Google",
+    "Your login": "Your login",
+    "Enter your login": "Enter your login",
+    "Or continue with email": "Or continue with email",
+    "Log in": "Log in",
+    "Sign up": "Sign up",
+    "Submit": "Submit",
+    "Log out": "Log out",
+    "Register": "Register",
+    "Dont have an account? Register": "Dont have an account? Register"
+  },
+  "header": {
+    "log in": "Log in",
+    "log out": "Log out",
+    "sign up": "Sign up"
+  },
+  "register": "Register",
+  "login": "Login"
+}

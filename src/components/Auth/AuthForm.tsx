@@ -1,4 +1,3 @@
-import { upperFirst } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import {
   TextInput,
@@ -18,14 +17,13 @@ import { GoogleButton } from 'components/shared/AuthButton/GoogleButton';
 import { GitHubButton } from 'components/shared/AuthButton/GitHubButton';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser, loginUser } from 'redux/slice/userSlice';
+import { login, register } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
-import { Paths } from 'Enum/Enum';
-import { UserState } from 'redux/slice/userSlice';
+import { DASHBOARD_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE } from 'utils/constsRoutes';
 
-interface Props {
+export type Props = {
   type: 'login' | 'register';
-}
+};
 
 interface LoginValues {
   login: string;
@@ -33,11 +31,10 @@ interface LoginValues {
   password: string;
   id?: string;
   token?: string;
+  userId: string;
 }
 
-const currentDashboard = Paths.Dashboard;
-
-export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
+const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [type, setType] = useState(formType);
@@ -48,39 +45,44 @@ export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
 
   const form = useForm({
     initialValues: {
-      email: '',
+      email: 'admin@clubapp.com',
       name: '',
-      password: '',
+      password: '123123123',
       terms: true,
       login: '',
+      userId: '',
     },
 
     validate: {
-      email: val => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      email: val => (/^\S+@\S+$/.test(val) ? null : t('authForm.Invalid email')),
       password: val =>
-        val.length <= 6 ? 'Password should include at least 6 characters' : null,
+        val.length <= 6
+          ? t('authForm.Password should include at least 6 characters')
+          : null,
     },
   });
 
   const dispatch = useAppDispatch();
-  const navigateToDashboard = () => {
-    navigate(currentDashboard);
-  };
 
-  const onLogin = (values: LoginValues) => {
-    const valuesWithToken: UserState = {
-      ...values,
-      token: values.token || 'defaultToken',
-    };
-    dispatch(loginUser(valuesWithToken)).then(() => navigateToDashboard());
+  const onLogin = async (values: LoginValues) => {
+    try {
+      await dispatch(login(values));
+      navigate(DASHBOARD_ROUTE);
+    } catch (error) {
+      console.error('Login error', error);
+    }
   };
 
   const onRegister = (values: LoginValues) => {
-    const valuesWithToken: UserState = {
-      ...values,
-      token: values.token || 'defaultToken',
-    };
-    dispatch(registerUser(valuesWithToken)).then(() => navigateToDashboard());
+    dispatch(
+      register({
+        email: values.email,
+        password: values.password,
+        login: values.login,
+        role: 'user',
+      }),
+    );
+    navigate(DASHBOARD_ROUTE);
   };
 
   const onSubmitSuccess: (values: LoginValues) => void = values => {
@@ -93,73 +95,77 @@ export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
 
   const handleToggleClick = () => {
     if (formType === 'login') {
-      navigate('/register');
+      navigate(REGISTRATION_ROUTE);
     } else {
-      navigate('/login');
+      navigate(LOGIN_ROUTE);
     }
   };
 
   return (
-    <Container m="xl">
+    <Container p="md">
       <Paper radius="md" p="xl" withBorder {...props}>
         <Text size="lg" fw={500}>
-          {t('Hello')}! {t('Welcome')}!
+          {t('authForm.Welcome')}!
         </Text>
         <Group grow mb="md" mt="md">
           <GoogleButton radius="xl">Google</GoogleButton>
           <GitHubButton radius="xl">GitHub</GitHubButton>
         </Group>
 
-        <Divider label={t('Or continue with email')} labelPosition="center" my="lg" />
+        <Divider
+          label={t('authForm.Continue with Google')}
+          labelPosition="center"
+          my="lg"
+        />
 
         <form onSubmit={form.onSubmit(onSubmitSuccess)}>
           <Stack>
             {type === 'register' && (
               <TextInput
-                label={t('Name')}
-                placeholder={t('Your name')}
+                label={t('authForm.Name')}
+                placeholder={t('authForm.Your name')}
                 value={form.values.name}
                 {...form.getInputProps('name')}
                 radius="md"
               />
             )}
-            <TextInput
-              required
-              label={t('Login')}
-              placeholder={t('Your login')}
-              value={form.values.login}
-              {...form.getInputProps('login')}
-              error={form.errors.login && 'Invalid login'}
-              radius="md"
-            />
-
             {type === 'register' && (
               <TextInput
                 required
-                label={t('Email')}
-                placeholder="hello@mantine.dev"
-                value={form.values.email}
-                {...form.getInputProps('email')}
-                error={form.errors.email && 'Invalid email'}
+                label={t('authForm.Login')}
+                placeholder={t('authForm.Your login')}
+                value={form.values.login}
+                {...form.getInputProps('login')}
+                error={form.errors.login && t('authForm.Invalid login')}
                 radius="md"
               />
             )}
+            <TextInput
+              required
+              label={t('authForm.Email')}
+              placeholder="hello@mantine.dev"
+              value={form.values.email}
+              {...form.getInputProps('email')}
+              error={form.errors.email && t('authForm.Invalid email')}
+              radius="md"
+            />
 
             <PasswordInput
               required
-              label={t('Password')}
-              placeholder={t('Your password')}
+              label={t('authForm.Password')}
+              placeholder={t('authForm.Your password')}
               value={form.values.password}
               {...form.getInputProps('password')}
               error={
-                form.errors.password && t('Password should include at least 6 characters')
+                form.errors.password &&
+                t('authForm.Password should include at least 6 characters')
               }
               radius="md"
             />
 
             {type === 'register' && (
               <Checkbox
-                label={t('I accept terms and conditions')}
+                label={t('authForm.I accept terms and conditions')}
                 checked={form.values.terms}
                 onChange={event =>
                   form.setFieldValue('terms', event.currentTarget.checked)
@@ -176,11 +182,11 @@ export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
               size="xs"
             >
               {formType === 'register'
-                ? t('Already have an account? Login')
-                : t("Don't have an account? Register")}
+                ? t('authForm.Already have an account? Login')
+                : t('authForm.Dont have an account? Register')}
             </Anchor>
             <Button type="submit" radius="xl">
-              {upperFirst(type)}
+              {t(type)}
             </Button>
           </Group>
         </form>
@@ -188,3 +194,4 @@ export const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
     </Container>
   );
 };
+export default AuthenticationForm;

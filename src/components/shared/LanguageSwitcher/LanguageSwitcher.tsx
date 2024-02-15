@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionIcon, Group, Text } from '@mantine/core';
 import cx from 'clsx';

@@ -1,70 +1,110 @@
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
-import { auth, signIn } from 'firebase/firebase';
+import { db, auth } from 'firebase/firebase';
 import 'firebase/firestore';
 
-interface User {
+export interface User {
   login: string;
   email: string;
-  token: string;
   id: string;
+  role: string;
+}
+interface RegisterUserParams {
+  email: string;
+  password: string;
+  login: string;
+  role: string;
 }
 
-export async function saveUserToDb(user: User) {
-  const db = getFirestore();
-  const userDoc = doc(db, 'users', user.id);
-  await setDoc(userDoc, {
-    login: user.login,
-    email: user.email,
-    token: user.token,
-  });
+interface LoginUserParams {
+  email: string;
+  password: string;
 }
 
-export async function handleRegister(email: string, password: string) {
-  const auth = getAuth();
-  return createUserWithEmailAndPassword(auth, email, password);
+export function getFirestore() {
+  return db;
 }
 
-export const authorizationUser = async (email: string, password: string) => {
-  try {
-    const userCredential = await signIn(auth, email, password);
-    const token = await userCredential.user.getIdToken();
-    const userWithToken = {
-      ...userCredential.user,
-      token,
+export async function registerUser({ email, password, login, role }: RegisterUserParams) {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  if (user) {
+    const userData: User = {
+      login,
+      email: user.email || '',
+      id: user.uid,
+      role,
     };
-    return userWithToken;
-  } catch (error) {
-    console.error(error);
-    throw error;
+
+    const userDocRef = doc(db, 'users', user.uid);
+    await setDoc(userDocRef, userData);
+
+    return userData;
+  } else {
+    throw new Error('User registration failed');
   }
-};
+}
 
-export const authWithGoogle = async () => {
-  const auth = getAuth();
+export async function loginUser({ email, password }: LoginUserParams) {
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid);
+    const docSnapshot = await getDoc(userDocRef);
+
+    if (docSnapshot.exists()) {
+      return docSnapshot.data() as User;
+    } else {
+      throw new Error('User does not exist in Firestore');
+    }
+  } else {
+    throw new Error('Email and password auth failed');
+  }
+}
+
+export async function signInWithGoogle(login: string) {
   const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  return result;
-};
-export const getUserDoc = async (userId: string) => {
-  const db = getFirestore();
-  const userDoc = doc(db, 'users', userId);
-  return await getDoc(userDoc);
-};
+  const userCredential = await signInWithPopup(auth, provider);
+  const user = userCredential.user;
 
-export const saveUserLogin = async (userId: string, login: string) => {
-  const db = getFirestore();
-  const userDoc = doc(db, 'users', userId);
-  return await setDoc(
-    userDoc,
-    {
-      customLogin: login,
-    },
-    { merge: true },
-  );
-};
+  if (user) {
+    const userDocRef = doc(db, 'users', user.uid);
+    const docSnapshot = await getDoc(userDocRef);
+
+    if (docSnapshot.exists()) {
+      return docSnapshot.data() as User;
+    } else {
+      const userData: User = {
+        login,
+        email: user.email || '',
+        id: user.uid,
+        role: 'user',
+      };
+
+      await setDoc(userDocRef, userData);
+      return userData;
+    }
+  } else {
+    throw new Error('Google auth failed');
+  }
+}
+
+export async function updateUserLogin(user: User, newLogin: string) {
+  const userDocRef = doc(db, 'users', user.id);
+  await updateDoc(userDocRef, { login: newLogin });
+
+  const updatedUser = { ...user, login: newLogin };
+  return updatedUser;
+}
+
+export function logout() {
+  return signOut(auth);
+}

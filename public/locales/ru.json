@@ -1,0 +1,52 @@
+{
+  "app": {
+    "title": "Современное приложение",
+    "subtitle": "Автоматизация клубов"
+  },
+  "homePage": {
+    "description": "Автоматизация компьютерных клубов обеспечивает эффективное управление ресурсами и повышает качество обслуживания клиентов, создавая комфортную и современную игровую среду.",
+    "listItem1": "Экспертиза в области автоматизации",
+    "listItem1Description": "Мы работаем с компьютерными клубами",
+    "listItem2": "Пользовательский опыт",
+    "listItem2Description": "Мы сосредоточены на создании лучшего пользовательского опыта",
+    "listItem3": "Надежность и поддержка",
+    "listItem3Description": "Мы обеспечиваем круглосуточную поддержку и гарантируем, что все системы работают надежно",
+    "getStartedButton": "Начать",
+    "googleAuthorizationButton": "Авторизация через Google"
+  },
+  "authForm": {
+    "Hello": "Привет",
+    "Welcome": "Добро пожаловать",
+    "Login": "Логин",
+    "Name": "Имя",
+    "Email": "Электронная почта",
+    "Password": "Пароль",
+    "Create Account": "Создать аккаунт",
+    "Already have an account? Login": "Уже есть аккаунт? Войти",
+    "Sign In": "Войти",
+    "Forgot Password?": "Забыли пароль?",
+    "Continue with Google": "Продолжить с Google",
+    "Your name": "Ваше имя",
+    "I accept terms and conditions": "Я принимаю условия и положения",
+    "Don't have an account? Register": "Нет аккаунта? Зарегистрироваться",
+    "Your password": "Ваш пароль",
+    "Your email": "Ваша электронная почта",
+    "Your password again": "Повторите пароль",
+    "Google Button Text": "Продолжить с Google",
+    "Your login": "Ваш логин",
+    "Enter your login": "Введите ваш логин",
+    "Or continue with email": "Или продолжить по электронной почте",
+    "Log in": "Войти",
+    "Sign up": "Зарегистрироваться",
+    "Submit": "Отправить",
+    "Log out": "Выйти",
+    "Dont have an account? Register": "Нет аккаунта? Зарегистрироваться"
+  },
+  "header": {
+    "log in": "Войти",
+    "log out": "Выйти",
+    "sign up": "Зарегистрироваться"
+  },
+  "register": "Зарегистрироваться",
+  "login": "Войти"
+}

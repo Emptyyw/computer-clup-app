@@ -1,116 +1,97 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { handleRegister, saveUserToDb, authorizationUser } from 'api/db';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { authWithGoogle } from 'api/db';
-export interface UserState {
-  login: string;
-  email: string;
-  password: string;
-  id?: string;
-  role?: string;
-  token: string;
-  isAuthenticated?: boolean;
-}
-export interface UserResponse {
-  login: string;
-  email: string;
-  token: string;
-  id: string;
-  isAuthenticated?: boolean;
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  SerializedError,
+} from '@reduxjs/toolkit';
+import { User, registerUser, loginUser, signInWithGoogle, updateUserLogin } from 'api/db';
+
+export interface AuthState {
+  user: User;
+  role: string;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | undefined;
 }
 
-const initialState: UserState = {
-  login: '',
-  email: '',
-  password: '',
-  token: '',
-  id: '',
-  role: undefined,
-  isAuthenticated: undefined,
+const initialState: AuthState = {
+  user: {
+    login: '',
+    email: '',
+    id: '',
+    role: '',
+  },
+  status: 'idle',
+  error: '',
+  role: '',
 };
 
-export const registerUser = createAsyncThunk(
-  'user/registerUser',
-  async ({ email, password, login }: UserState) => {
-    const userCredential = await handleRegister(email, password);
-    const user = {
-      login,
-      email,
-      token: userCredential.user.refreshToken,
-      id: userCredential.user.uid,
-      password: '',
-      role: '',
-      isAuthenticated: true,
-    };
-    await saveUserToDb(user);
-    return user;
-  },
-);
+export const register = createAsyncThunk('auth/register', registerUser);
+export const login = createAsyncThunk('auth/login', loginUser);
 
-export const loginUser = createAsyncThunk(
-  'user/loginUser',
-  async ({ email, password }: UserState, thunkAPI) => {
+export const authGoogle = createAsyncThunk<User | undefined, string>(
+  'user/authGoogle',
+  async (login, thunkAPI) => {
     try {
-      const user = await authorizationUser(email, password);
+      const user = await signInWithGoogle(login);
       return user;
-    } catch (error) {
+    } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error);
     }
   },
 );
 
-export const signInWithGoogle = createAsyncThunk(
-  'user/signInWithGoogle',
-  async (_, thunkAPI) => {
+export const updateLogin = createAsyncThunk(
+  'auth/updateLogin',
+  async ({ user, newLogin }: { user: User; newLogin: string }, thunkAPI) => {
     try {
-      const result = await authWithGoogle();
-      const user = {
-        login: result.user.displayName,
-        email: result.user.email,
-        token: result.user.refreshToken,
-        id: result.user.uid,
-      };
-      return user;
-    } catch (error) {
-      if (error instanceof Error) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-      return thunkAPI.rejectWithValue('An unknown error occurred');
+      const updatedUser = await updateUserLogin(user, newLogin);
+      return updatedUser;
+    } catch (error: unknown) {
+      return thunkAPI.rejectWithValue(error);
     }
   },
 );
 
-export const userSlice = createSlice({
-  name: 'user',
+const authSlice = createSlice({
+  name: 'auth',
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<UserState>) => {
-      state.email = action.payload.email;
-      state.password = action.payload.password;
-      state.login = action.payload.login;
-      state.token = action.payload.token;
-      state.id = action.payload.id;
-    });
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      if (action.payload.email !== null) {
-        state.email = action.payload.email;
-      }
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
-    });
-    builder.addCase(signInWithGoogle.fulfilled, (state, action) => {
-      if (action.payload.email !== null) {
-        state.email = action.payload.email;
-      }
-      state.token = action.payload.token;
-      if (action.payload.login !== null) {
-        state.login = action.payload.login;
-      }
-      state.id = action.payload.id;
-      state.isAuthenticated = true;
-    });
+    builder
+      .addCase(register.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+        state.role = action.payload.role;
+      })
+      .addCase(authGoogle.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload || state.user;
+      });
+    builder
+      .addCase(updateLogin.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+      })
+      .addMatcher(
+        action => action.type.endsWith('/pending'),
+        state => {
+          state.status = 'loading';
+        },
+      )
+      .addMatcher(
+        action => action.type.endsWith('/rejected'),
+        (state, action: PayloadAction<SerializedError>) => {
+          state.status = 'failed';
+          if (action.payload) {
+            state.error = action.payload.message;
+          }
+        },
+      );
   },
 });
 
-export default userSlice.reducer;
+export default authSlice.reducer;

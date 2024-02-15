@@ -1,10 +1,6 @@
 import { useSelector } from 'react-redux';
-import { UserState } from 'redux/slice/userSlice';
-
-interface AppState {
-  user: UserState;
-}
+import { RootState } from 'store/store';
 
 export const useAuth = () => {
-  return useSelector((state: AppState) => state.user);
+  return useSelector((state: RootState) => state.user);
 };

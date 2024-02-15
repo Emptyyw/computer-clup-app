@@ -6,44 +6,40 @@ import logo from 'assets/logo/shuriken.png';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'hooks/useAuth';
+import { LOGIN_ROUTE, REGISTRATION_ROUTE } from 'utils/constsRoutes';
 
 export function HeaderMenu() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const user = useAuth();
-  const isAuthenticated = !!user.token;
+  const auth = useAuth();
+  const isAuthenticated = !!auth.user.login;
 
   const handleLoginClick = () => {
-    navigate('/login');
+    navigate(LOGIN_ROUTE);
   };
 
   const handleSignupClick = () => {
-    navigate('/register');
+    navigate(REGISTRATION_ROUTE);
   };
-  const handleLogoutClick = () => {
-    navigate('/login');
+
+  const handleHomeClick = () => {
+    navigate('/');
   };
 
   return (
     <header className={classes.header}>
       <Group justify="space-between" h="100%">
-        <Group justify="center" grow>
+        <Group onClick={handleHomeClick} justify="center" grow>
           <Image src={logo} h={30} alt="logo" />
-          <Text fw={700}>ClubApp </Text>
+          <Text fw={700}>ClubApp</Text>
         </Group>
 
         <Group justify="center">
-          {!isAuthenticated ? (
+          {!isAuthenticated && (
             <Group justify="center">
-              <Button onClick={handleSignupClick}>{t('Sign up')}</Button>
+              <Button onClick={handleSignupClick}>{t('header.sign up')}</Button>
               <Button onClick={handleLoginClick} variant="default">
-                {t('Log in')}
-              </Button>
-            </Group>
-          ) : (
-            <Group justify="center">
-              <Button onClick={handleLogoutClick} variant="default">
-                {t('Log out')}
+                {t('header.log in')}
               </Button>
             </Group>
           )}

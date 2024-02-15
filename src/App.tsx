@@ -1,40 +1,31 @@
 import './App.css';
-import { Container } from '@mantine/core';
 import '@mantine/core/styles.css';
-import './components//18next/i18n';
-import { AuthenticationForm } from 'components/Auth/AuthForm';
 import { HeaderMenu } from 'layout/header/Header';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Dashboard from 'components/dashboard';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'firebase/firebase';
-import { Paths, Types } from 'Enum/Enum';
-
-const currentLogin = Paths.Login;
-const currentTypeLogin = Types.Login;
-const currentRegister = Paths.Register;
-const currentTypeRegister = Types.Register;
-const currentDashboard = Paths.Dashboard;
+import AppRouter from 'routes/AppRouter';
+import { useAuth } from 'hooks/useAuth';
+import { Navbar } from 'layout/navbar/NavBar';
+import { Paper } from '@mantine/core';
 
 const App = () => {
+  const auth = useAuth();
+  const isAuthenticated = auth.user && !!auth.user.login;
+
   return (
     <Router>
       <HeaderMenu />
-      <Container>
-        <Routes>
-          <Route
-            path={currentLogin}
-            element={<AuthenticationForm type={currentTypeLogin} />}
-          />
-          <Route
-            path={currentRegister}
-            element={<AuthenticationForm type={currentTypeRegister} />}
-          />
-          <Route path={currentDashboard} element={<Dashboard />} />
-          <Route path="/" element={<Dashboard />} />
-        </Routes>
-      </Container>
+      <div style={{ display: 'flex' }}>
+        {isAuthenticated && (
+          <Paper style={{ flex: '0 0 240px' }}>
+            <Navbar />
+          </Paper>
+        )}
+        <div style={{ flex: '1 0 auto' }}>
+          <AppRouter />
+        </div>
+      </div>
     </Router>
   );
 };
-
 export default App;
