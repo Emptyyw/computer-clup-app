@@ -6,9 +6,9 @@ const Dashboard = () => {
 
   return (
     <>
-      {auth.user && (
+      {auth && (
         <Text size="xl" fw={700}>
-          Это панель дэшборд, привет {auth.user.login}!
+          Это панель дэшборд, привет {auth.login}!
         </Text>
       )}
     </>

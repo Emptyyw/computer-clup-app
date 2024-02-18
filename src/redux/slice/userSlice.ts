@@ -4,13 +4,22 @@ import {
   PayloadAction,
   SerializedError,
 } from '@reduxjs/toolkit';
-import { User, registerUser, loginUser, signInWithGoogle, updateUserLogin } from 'api/db';
+import {
+  User,
+  registerUser,
+  loginUser,
+  signInWithGoogle,
+  updateUserLogin,
+  firebaseLogout,
+} from 'api/db';
 
 export interface AuthState {
   user: User;
   role: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | undefined;
+  isAuthenticated: boolean;
+  token: string | null;
 }
 
 const initialState: AuthState = {
@@ -20,9 +29,11 @@ const initialState: AuthState = {
     id: '',
     role: '',
   },
+  role: '',
   status: 'idle',
   error: '',
-  role: '',
+  isAuthenticated: false,
+  token: null,
 };
 
 export const register = createAsyncThunk('auth/register', registerUser);
@@ -51,6 +62,10 @@ export const updateLogin = createAsyncThunk(
     }
   },
 );
+export const logout = createAsyncThunk('user/logout', async () => {
+  await firebaseLogout();
+  return {};
+});
 
 const authSlice = createSlice({
   name: 'auth',
@@ -59,22 +74,42 @@ const authSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(register.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.user = action.payload;
+        if (action.payload) {
+          state.status = 'succeeded';
+          state.user = action.payload;
+        }
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.user = action.payload;
-        state.role = action.payload.role;
+        if (action.payload) {
+          state.status = 'succeeded';
+          state.user = action.payload;
+          state.role = action.payload.role;
+        }
       })
       .addCase(authGoogle.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.user = action.payload || state.user;
+        if (action.payload) {
+          state.status = 'succeeded';
+          state.user = action.payload;
+        }
       });
-    builder
-      .addCase(updateLogin.fulfilled, (state, action) => {
+    builder.addCase(updateLogin.fulfilled, (state, action) => {
+      if (action.payload) {
         state.status = 'succeeded';
         state.user = action.payload;
+      }
+    });
+    builder;
+    builder
+      .addCase(logout.fulfilled, state => {
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = {
+          login: '',
+          email: '',
+          id: '',
+          role: '',
+        };
+        state.role = '';
       })
       .addMatcher(
         action => action.type.endsWith('/pending'),
@@ -93,5 +128,4 @@ const authSlice = createSlice({
       );
   },
 });
-
 export default authSlice.reducer;

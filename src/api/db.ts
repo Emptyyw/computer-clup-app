@@ -1,4 +1,4 @@
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { db, auth } from 'firebase/firebase';
 import 'firebase/firestore';
+import { saveUserToDb } from './setDoc';
 
 export interface User {
   login: string;
@@ -33,23 +34,8 @@ export function getFirestore() {
 
 export async function registerUser({ email, password, login, role }: RegisterUserParams) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
 
-  if (user) {
-    const userData: User = {
-      login,
-      email: user.email || '',
-      id: user.uid,
-      role,
-    };
-
-    const userDocRef = doc(db, 'users', user.uid);
-    await setDoc(userDocRef, userData);
-
-    return userData;
-  } else {
-    throw new Error('User registration failed');
-  }
+  return saveUserToDb(userCredential, login, role);
 }
 
 export async function loginUser({ email, password }: LoginUserParams) {
@@ -73,24 +59,15 @@ export async function loginUser({ email, password }: LoginUserParams) {
 export async function signInWithGoogle(login: string) {
   const provider = new GoogleAuthProvider();
   const userCredential = await signInWithPopup(auth, provider);
-  const user = userCredential.user;
 
-  if (user) {
-    const userDocRef = doc(db, 'users', user.uid);
+  if (userCredential.user) {
+    const userDocRef = doc(db, 'users', userCredential.user.uid);
     const docSnapshot = await getDoc(userDocRef);
 
     if (docSnapshot.exists()) {
       return docSnapshot.data() as User;
     } else {
-      const userData: User = {
-        login,
-        email: user.email || '',
-        id: user.uid,
-        role: 'user',
-      };
-
-      await setDoc(userDocRef, userData);
-      return userData;
+      return saveUserToDb(userCredential, login, 'user');
     }
   } else {
     throw new Error('Google auth failed');
@@ -105,6 +82,6 @@ export async function updateUserLogin(user: User, newLogin: string) {
   return updatedUser;
 }
 
-export function logout() {
+export function firebaseLogout() {
   return signOut(auth);
 }

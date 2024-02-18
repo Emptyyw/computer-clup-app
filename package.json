@@ -22,6 +22,7 @@
     "@reduxjs/toolkit": "^2.1.0",
     "@tabler/core": "^1.0.0-beta20",
     "@tabler/icons-react": "^2.46.0",
+    "@types/redux-logger": "^3.0.13",
     "babel-eslint": "^10.1.0",
     "dotenv": "^16.4.1",
     "firebase": "^10.8.0",
@@ -37,6 +38,8 @@
     "react-intl-tel-input": "^8.2.0",
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.3",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0"
   },
   "devDependencies": {

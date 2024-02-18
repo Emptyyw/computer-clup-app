@@ -12,7 +12,7 @@ export function HeaderMenu() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const auth = useAuth();
-  const isAuthenticated = !!auth.user.login;
+  const isAuthenticated = auth && !!auth.login;
 
   const handleLoginClick = () => {
     navigate(LOGIN_ROUTE);
