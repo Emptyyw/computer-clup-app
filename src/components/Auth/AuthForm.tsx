@@ -32,6 +32,8 @@ interface LoginValues {
   id?: string;
   token?: string;
   userId: string;
+  name: string;
+  terms: boolean;
 }
 
 const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
@@ -80,6 +82,9 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
         password: values.password,
         login: values.login,
         role: 'user',
+        firstName: values.name,
+        lastName: values.name,
+        phoneNum: 1234567890,
       }),
     );
     navigate(DASHBOARD_ROUTE);

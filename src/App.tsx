@@ -7,26 +7,21 @@ import AppRouter from 'routes/AppRouter';
 import { useAuth } from 'hooks/useAuth';
 import { Navbar } from 'layout/navbar/NavBar';
 import { Paper } from '@mantine/core';
-import { useEffect, useState } from 'react';
 
 const App = () => {
   const auth = useAuth();
-  const [isAuthenticated, setIsAuthenticated] = useState(auth && !!auth.login);
-
-  useEffect(() => {
-    setIsAuthenticated(auth && !!auth.login);
-  }, [auth]);
+  const isAuthenticated = auth && !!auth.login;
 
   return (
     <Router>
       <HeaderMenu />
-      <div style={{ display: 'flex' }}>
+      <div className="wrapper">
         {isAuthenticated && (
-          <Paper style={{ flex: '0 0 240px' }}>
+          <Paper className="navbar">
             <Navbar />
           </Paper>
         )}
-        <div style={{ flex: '1 0 auto' }}>
+        <div className="item">
           <AppRouter />
         </div>
       </div>

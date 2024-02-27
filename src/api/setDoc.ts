@@ -11,10 +11,16 @@ export async function saveUserToDb(
   userCredential: UserCredential,
   login: string,
   role: string,
+  lastName?: string,
+  firstName?: string,
+  phoneNum?: number,
 ) {
   const user = userCredential.user;
   if (user) {
     const userData: User = {
+      firstName,
+      lastName,
+      phoneNum,
       login,
       email: user.email || '',
       id: user.uid,

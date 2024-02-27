@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@firebase/auth": "^1.6.0",
+    "@firebase/database": "^1.0.3",
     "@firebase/firestore": "^4.4.2",
     "@mantine/core": "^7.5.0",
     "@mantine/form": "^7.5.0",

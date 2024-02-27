@@ -1,0 +1,21 @@
+.icon {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+}
+
+.name {
+  font-family:
+    Greycliff CF,
+    var(--mantine-font-family);
+}
+
+.wrapper {
+  display: flex;
+  margin: 20px;
+}
+.paper {
+  flex: 0 0 200px;
+}
+
+.item {
+  flex: 1 0 auto;
+}

@@ -1,34 +1,59 @@
 import { useState } from 'react';
+import { UnstyledButton, Menu, Image, Group } from '@mantine/core';
+import en from 'components/shared/LanguageSwitcher/Image/english.png';
+import ru from 'components/shared/LanguageSwitcher/Image/russian.png';
+import classes from 'components/shared/LanguageSwitcher/LanguageSwitcher.module.css';
 import { useTranslation } from 'react-i18next';
-import { ActionIcon, Group, Text } from '@mantine/core';
-import cx from 'clsx';
-import classes from './LanguageSwitcher.module.css';
 import { langSwitcher } from 'Enum/Enum';
+
+const data = [
+  { label: 'Русский', image: ru, code: 'ru' },
+  { label: 'English', image: en, code: 'en' },
+];
 
 function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+  const savedLanguage = localStorage.getItem('language');
+  const initialLanguage = data.find(item => item.code === savedLanguage) || data[0];
+  const [opened, setOpened] = useState(false);
+  const [selected, setSelected] = useState(initialLanguage);
 
-  const changeLanguage = () => {
-    const newLanguage =
-      currentLanguage === langSwitcher.LangEn ? langSwitcher.LangRu : langSwitcher.LangEn;
-    i18n.changeLanguage(newLanguage);
-    setCurrentLanguage(newLanguage);
-  };
+  const items = data.map(item => (
+    <Menu.Item
+      leftSection={<Image src={item.image} width={35} height={25} />}
+      onClick={() => {
+        setSelected(item);
+        changeLanguage(item.code as langSwitcher);
+      }}
+      key={item.label}
+    >
+      {item.label}
+    </Menu.Item>
+  ));
+
+  function changeLanguage(language: langSwitcher) {
+    i18n.changeLanguage(language);
+    localStorage.setItem('language', language);
+  }
 
   return (
-    <Group>
-      <ActionIcon
-        onClick={changeLanguage}
-        variant="default"
-        size="xl"
-        aria-label="Switch language"
-        radius="lg"
-      >
-        <Text className={cx(classes.icon)}>{currentLanguage.toUpperCase()}</Text>
-      </ActionIcon>
-    </Group>
+    <Menu
+      onOpen={() => setOpened(true)}
+      onClose={() => setOpened(false)}
+      radius="md"
+      width="auto"
+      withinPortal
+    >
+      <Menu.Target>
+        <UnstyledButton className={classes.control} data-expanded={opened || undefined}>
+          <Group gap="xs">
+            <Image src={selected.image} width={22} height={22} />
+            <span className={classes.label}>{selected.label}</span>
+          </Group>
+        </UnstyledButton>
+      </Menu.Target>
+      <Menu.Dropdown>{items}</Menu.Dropdown>
+    </Menu>
   );
 }
-
 export default LanguageSwitcher;

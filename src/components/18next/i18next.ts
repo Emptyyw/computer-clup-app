@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-
 import enTranslation from '../../../public/locales/en.json';
 import ruTranslation from '../../../public/locales/ru.json';
 
@@ -17,7 +16,8 @@ i18n
         translation: ruTranslation,
       },
     },
-    fallbackLng: 'en',
+    lng: localStorage.getItem('language') || 'ru',
+    fallbackLng: 'ru',
     interpolation: {
       escapeValue: false,
     },

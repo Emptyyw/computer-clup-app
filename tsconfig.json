@@ -13,6 +13,9 @@
     "paths": {
       "assets": ["assets"],
       "public": ["./public"],
+      "components/*": ["components/*"],
+      "hooks/*": ["hooks/*"],
+      "pages/*": ["pages/*"],
     },
 
     /* Bundler mode */

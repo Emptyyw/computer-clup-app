@@ -5,6 +5,34 @@
   border-bottom: rem(1px) solid
     light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
+.icon {
+  border: 3px solid;
+  border-radius: 50%;
+  background: linear-gradient(270deg, red, yellow, lime, aqua, blue, magenta, red);
+  background-size: 200% 200%;
+  animation:
+    rotation 2s linear infinite,
+    gradient 8s ease-in-out infinite;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
 
 .link {
   display: flex;

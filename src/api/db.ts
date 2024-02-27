@@ -1,22 +1,36 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
+import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { db, auth } from 'firebase/firebase';
+import { db, auth, storage, realtimeDb } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
+import { ref as dbRef, set, onValue } from 'firebase/database';
 
 export interface User {
+  firstName?: string;
+  lastName?: string;
+  phoneNum?: number;
   login: string;
   email: string;
   id: string;
   role: string;
+  avatarUrl?: string;
 }
 interface RegisterUserParams {
+  firstName: string;
+  lastName: string;
+  phoneNum: number;
   email: string;
   password: string;
   login: string;
@@ -32,10 +46,17 @@ export function getFirestore() {
   return db;
 }
 
-export async function registerUser({ email, password, login, role }: RegisterUserParams) {
+export async function registerUser({
+  email,
+  password,
+  login,
+  role,
+  firstName,
+  lastName,
+}: RegisterUserParams) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-  return saveUserToDb(userCredential, login, role);
+  return saveUserToDb(userCredential, login, role, firstName, lastName);
 }
 
 export async function loginUser({ email, password }: LoginUserParams) {
@@ -81,6 +102,52 @@ export async function updateUserLogin(user: User, newLogin: string) {
   const updatedUser = { ...user, login: newLogin };
   return updatedUser;
 }
+
+export async function updateUserProfile(user: User, firstName: string, lastName: string) {
+  const userDocRef = doc(db, 'users', user.id);
+  await updateDoc(userDocRef, {
+    lastName: lastName,
+    firstName: firstName,
+  });
+
+  const updatedUser = { ...user, lastName, firstName };
+  return updatedUser;
+}
+
+export async function uploadFile(file: File, userId: string) {
+  const storageRef = ref(storage, `AvatarProfile/${userId}`);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  await uploadTask;
+
+  const url = await getDownloadURL(storageRef);
+  return url;
+}
+
+export async function saveAvatarUrl(userId: string, avatarUrl: string) {
+  await set(dbRef(realtimeDb, 'users/' + userId), {
+    avatarUrl: avatarUrl,
+  });
+}
+
+export function loadAvatarUrl(userId: string) {
+  return new Promise((resolve, reject) => {
+    const avatarUrlRef = dbRef(realtimeDb, 'users/' + userId + '/avatarUrl');
+    onValue(avatarUrlRef, snapshot => {
+      const avatarUrl = snapshot.val();
+      if (avatarUrl) {
+        resolve(avatarUrl);
+      } else {
+        reject('No avatar URL found');
+      }
+    });
+  });
+}
+
+export const deleteAvatar = async (avatarUrl: string) => {
+  const avatarRef = ref(storage, 'AvatarProfile/' + avatarUrl);
+  deleteObject(avatarRef);
+};
 
 export function firebaseLogout() {
   return signOut(auth);

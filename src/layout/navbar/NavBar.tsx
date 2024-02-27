@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
 import { IconHome2, IconGauge, IconFingerprint, IconLogout } from '@tabler/icons-react';
 import classes from './Navbar.module.css';
-
 import { DASHBOARD_ROUTE, ADMIN_ROUTE, LOGIN_ROUTE } from 'utils/constsRoutes';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'hooks/useAuth';

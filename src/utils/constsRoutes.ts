@@ -4,3 +4,7 @@ export const DASHBOARD_ROUTE = '/dashboard';
 export const HOME_ROUTE = '/';
 export const ADMIN_ROUTE = '/admin';
 export const NOT_FOUND_ROUTE = '/404';
+export const PROFILE_ROUTE = '/profile';
+export const PROFILE_FRIENDS_ROUTE = 'friends';
+export const PROFILE_STATISTICS_ROUTE = 'statistics';
+export const PROFILE_TEAMS_ROUTE = 'teams';

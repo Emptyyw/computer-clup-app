@@ -64,5 +64,18 @@
     "title": "Something is not right...",
     "description": "Page you are trying to open does not exist. You may have mistyped the address, or the page has been moved to another URL. If you think this is an error contact support.",
     "button": "Go back to home page"
+  },
+  "search": {
+    "searchPlaceholder": "Search..."
+  },
+
+  "Teams": "Teams",
+  "Friends": "Friends",
+  "Statistics": "Statistics",
+  "userinfo": {
+    "Enter your data": "Enter your data",
+    "Your Name": "Your Name",
+    "Your Last Name": "Your Last Name",
+    "Submit": "Submit"
   }
 }
