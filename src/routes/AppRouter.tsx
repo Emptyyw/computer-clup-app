@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 const AppRouter = () => {
   const auth = useAuth();
+
   const [isAuthenticated, setIsAuthenticated] = useState(auth && !!auth.login);
   const [isAdmin, setIsAdmin] = useState(isAuthenticated && auth.role === 'admin');
 

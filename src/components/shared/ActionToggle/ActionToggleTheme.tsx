@@ -6,10 +6,10 @@ import {
   Group,
 } from '@mantine/core';
 import { IconSun, IconMoon } from '@tabler/icons-react';
-import classes from './ActionToggle.module.css';
+import classes from 'components/shared/ActionToggle/ActionToggleActionToggleTheme.module.css';
 import { colorScheme } from 'Enum/Enum';
 
-export function ActionToggle() {
+export function ActionToggleTheme() {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', {
     getInitialValueInEffect: true,
