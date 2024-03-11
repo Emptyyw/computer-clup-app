@@ -1,4 +1,3 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import {
   deleteObject,
   getDownloadURL,
@@ -16,6 +15,15 @@ import { auth, db, realtimeDb, storage } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
 import { ref as dbRef, set } from 'firebase/database';
+import {
+  deleteDoc,
+  doc,
+  DocumentData,
+  DocumentReference,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from '@firebase/firestore';
 
 export interface User {
   id: string;
@@ -27,6 +35,7 @@ export interface User {
   role: string;
   avatarUrl?: string;
 }
+
 interface RegisterUserParams {
   firstName: string;
   lastName: string;
@@ -40,10 +49,6 @@ interface RegisterUserParams {
 interface LoginUserParams {
   email: string;
   password: string;
-}
-
-export function getFirestore() {
-  return db;
 }
 
 export async function registerUser({
@@ -153,4 +158,52 @@ export const deleteAvatar = async (avatarUrl: string) => {
 
 export function firebaseLogout() {
   return signOut(auth);
+}
+
+export enum FireBaseCollection {
+  Profile = 'profile',
+}
+
+export const getFirestoreDataById = async <T extends DocumentData>(
+  path: FireBaseCollection,
+  id: string,
+): Promise<T | null> => {
+
+  const docRef = doc(db, path, id) as DocumentReference<T>;
+  const snapshot = await getDoc(docRef);
+
+  if (snapshot.exists()) {
+    return snapshot.data();
+  }
+
+  return null;
+}
+
+export const setFirestoreDataById = async<T extends DocumentData>(
+  path: FireBaseCollection,
+  id: string,
+  data: T
+): Promise<DocumentReference<T>> => {
+  const docRef = doc(db, path, id) as DocumentReference<T>;
+  await setDoc(docRef, data);
+  return docRef;
+}
+
+export const updateFirestoreDataById = async<T extends DocumentData>(
+  path: FireBaseCollection,
+  id: string,
+  data: DocumentData,
+): Promise<DocumentReference<T>> => {
+  const docRef = doc(db, path, id) as DocumentReference<T>;
+  await updateDoc(docRef, data);
+  return docRef;
+}
+
+export const deleteFirestoreDataById = async<T extends DocumentData>(
+  path: FireBaseCollection,
+  id: string,
+): Promise<DocumentReference<T>> => {
+  const docRef = doc(db, path, id) as DocumentReference<T>;
+  await deleteDoc(docRef);
+  return docRef;
 }
