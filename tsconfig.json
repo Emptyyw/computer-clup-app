@@ -12,10 +12,11 @@
     "baseUrl": "src",
     "paths": {
       "assets": ["assets"],
-      "public": ["./public"],
+      "public": ["../public"],
       "components/*": ["components/*"],
       "hooks/*": ["hooks/*"],
       "pages/*": ["pages/*"],
+      "src/layout/*": ["layout/*"],
     },
 
     /* Bundler mode */

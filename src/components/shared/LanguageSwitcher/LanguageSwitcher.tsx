@@ -18,13 +18,17 @@ function LanguageSwitcher() {
   const [opened, setOpened] = useState(false);
   const [selected, setSelected] = useState(initialLanguage);
 
+  const setLang = (item: { label: string; image: string; code: string }) => {
+    return () => {
+      setSelected(item);
+      changeLanguage(item.code as langSwitcher);
+    };
+  };
+
   const items = data.map(item => (
     <Menu.Item
       leftSection={<Image src={item.image} width={35} height={25} />}
-      onClick={() => {
-        setSelected(item);
-        changeLanguage(item.code as langSwitcher);
-      }}
+      onClick={setLang(item)}
       key={item.label}
     >
       {item.label}

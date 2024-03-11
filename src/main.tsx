@@ -5,8 +5,9 @@ import { MantineProvider, createTheme, MantineColorsTuple } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals';
 import { store } from 'store/store';
 import { Provider } from 'react-redux';
-import i18n from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import i18next from 'i18next';
 
 const myColor: MantineColorsTuple = [
   '#00D6C1',
@@ -34,20 +35,24 @@ Promise.all([
   fetch('/locales/en.json').then(response => response.json()),
   fetch('/locales/ru.json').then(response => response.json()),
 ]).then(([enTranslation, ruTranslation]) => {
-  i18n.use(initReactI18next).init({
-    resources: {
-      en: {
-        translation: enTranslation,
+  i18next
+    .use(LanguageDetector)
+    .use(initReactI18next)
+    .init({
+      resources: {
+        en: {
+          translation: enTranslation,
+        },
+        ru: {
+          translation: ruTranslation,
+        },
       },
-      ru: {
-        translation: ruTranslation,
+      lng: localStorage.getItem('language') || 'ru',
+      fallbackLng: 'ru',
+      interpolation: {
+        escapeValue: false,
       },
-    },
-    lng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
+    });
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <MantineProvider theme={theme}>

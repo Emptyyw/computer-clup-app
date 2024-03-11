@@ -1,16 +1,5 @@
 import { ReactElement } from 'react';
-import {
-  DASHBOARD_ROUTE,
-  LOGIN_ROUTE,
-  REGISTRATION_ROUTE,
-  HOME_ROUTE,
-  ADMIN_ROUTE,
-  NOT_FOUND_ROUTE,
-  PROFILE_ROUTE,
-  PROFILE_FRIENDS_ROUTE,
-  PROFILE_TEAMS_ROUTE,
-  PROFILE_STATISTICS_ROUTE,
-} from './src/utils/constsRoutes';
+import { RoutePaths } from './src/Enum/Enum';
 import AuthenticationForm from './src/components/Auth/AuthForm';
 import Dashboard from './src/components/dashboard';
 import HomePage from './src/components/pages/HomePage/HomePage';
@@ -29,46 +18,46 @@ interface Route {
 
 export const publicRoutes: Route[] = [
   {
-    path: LOGIN_ROUTE,
+    path: RoutePaths.LOGIN_ROUTE,
     element: <AuthenticationForm type="login" />,
   },
   {
-    path: REGISTRATION_ROUTE,
+    path: RoutePaths.REGISTRATION_ROUTE,
     element: <AuthenticationForm type="register" />,
   },
   {
-    path: HOME_ROUTE,
+    path: RoutePaths.HOME_ROUTE,
     element: <HomePage />,
   },
   {
-    path: NOT_FOUND_ROUTE,
+    path: RoutePaths.NOT_FOUND_ROUTE,
     element: <NotFoundPage />,
   },
 ];
 
 export const privateRoutes: Route[] = [
   {
-    path: DASHBOARD_ROUTE,
+    path: RoutePaths.DASHBOARD_ROUTE,
     element: <Dashboard />,
   },
   {
-    path: NOT_FOUND_ROUTE,
+    path: RoutePaths.NOT_FOUND_ROUTE,
     element: <NotFoundPage />,
   },
   {
-    path: PROFILE_ROUTE,
+    path: RoutePaths.PROFILE_ROUTE,
     element: <Profile />,
     children: [
       {
-        path: PROFILE_TEAMS_ROUTE,
+        path: `${RoutePaths.PROFILE_ROUTE}${RoutePaths.PROFILE_TEAMS_ROUTE}`,
         element: <Teams />,
       },
       {
-        path: PROFILE_FRIENDS_ROUTE,
+        path: `${RoutePaths.PROFILE_ROUTE}${RoutePaths.PROFILE_FRIENDS_ROUTE}`,
         element: <Friends />,
       },
       {
-        path: PROFILE_STATISTICS_ROUTE,
+        path: `${RoutePaths.PROFILE_ROUTE}${RoutePaths.PROFILE_STATISTICS_ROUTE}`,
         element: <Statistics />,
       },
     ],
@@ -77,7 +66,7 @@ export const privateRoutes: Route[] = [
 
 export const adminRoutes: Route[] = [
   {
-    path: ADMIN_ROUTE,
+    path: RoutePaths.ADMIN_ROUTE,
     element: <AdminPage />,
   },
 ];

@@ -6,41 +6,31 @@ import logo from 'assets/logo/shuriken.png';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'hooks/useAuth';
-import { LOGIN_ROUTE, REGISTRATION_ROUTE, PROFILE_ROUTE } from 'utils/constsRoutes';
+import { RoutePaths } from 'Enum/Enum';
 import { InputSearch } from 'components/shared/search/InputSearch';
 import { IconShoppingCartFilled } from '@tabler/icons-react';
 import { IconBellFilled } from '@tabler/icons-react';
 import { IconCoins } from '@tabler/icons-react';
-import { useEffect } from 'react';
-import { loadUserAvatar } from 'redux/slice/userSlice';
-import { useAppDispatch } from 'store/store';
 
 export function HeaderMenu() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const auth = useAuth();
   const isAuthenticated = auth && !!auth.login;
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (auth.id) {
-      dispatch(loadUserAvatar(auth.id));
-    }
-  }, [dispatch, auth.id]);
 
   const handleLoginClick = () => {
-    navigate(LOGIN_ROUTE);
+    navigate(RoutePaths.LOGIN_ROUTE);
   };
 
   const handleSignupClick = () => {
-    navigate(REGISTRATION_ROUTE);
+    navigate(RoutePaths.REGISTRATION_ROUTE);
   };
 
   const handleHomeClick = () => {
     navigate('/');
   };
   const handleProfileClick = () => {
-    navigate(PROFILE_ROUTE);
+    navigate(RoutePaths.PROFILE_ROUTE);
   };
 
   return (

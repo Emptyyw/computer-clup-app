@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
 import { IconHome2, IconGauge, IconFingerprint, IconLogout } from '@tabler/icons-react';
-import classes from './Navbar.module.css';
-import { DASHBOARD_ROUTE, ADMIN_ROUTE, LOGIN_ROUTE } from 'utils/constsRoutes';
+import classes from './NavBar.module.css';
+import { RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'hooks/useAuth';
 import { persistor, useAppDispatch } from 'store/store';
@@ -29,8 +29,8 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const mockdata = [
-  { icon: IconGauge, label: 'Dashboard', route: DASHBOARD_ROUTE },
-  { icon: IconFingerprint, label: 'Security', route: ADMIN_ROUTE },
+  { icon: IconGauge, label: 'Dashboard', route: RoutePaths.DASHBOARD_ROUTE },
+  { icon: IconFingerprint, label: 'Security', route: RoutePaths.ADMIN_ROUTE },
 ];
 
 export function Navbar() {
@@ -43,7 +43,7 @@ export function Navbar() {
 
   useEffect(() => {
     if (!auth) {
-      navigate(LOGIN_ROUTE);
+      navigate(RoutePaths.LOGIN_ROUTE);
     }
   }, [auth, navigate]);
 
@@ -51,7 +51,7 @@ export function Navbar() {
     try {
       await dispatch(logout()).unwrap();
       await persistor.purge();
-      navigate(LOGIN_ROUTE);
+      navigate(RoutePaths.LOGIN_ROUTE);
     } catch (error) {
       console.error('error exit', error);
     }

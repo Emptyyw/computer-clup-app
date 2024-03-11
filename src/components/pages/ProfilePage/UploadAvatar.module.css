@@ -4,18 +4,25 @@
   height: 200px;
 }
 
-.hoverOverlay {
+.avatarContainer .avatarButton {
+  display: block;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  border-radius: 15%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.44);
+  border-radius: 16%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.hiddenInput {
+.avatarContainer:hover .avatarButton {
+  opacity: 1;
+}
+.avatarButton {
   display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

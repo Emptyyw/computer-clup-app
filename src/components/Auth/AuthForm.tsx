@@ -19,7 +19,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
-import { DASHBOARD_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE } from 'utils/constsRoutes';
+import { RoutePaths } from 'Enum/Enum';
 
 export type Props = {
   type: 'login' | 'register';
@@ -69,7 +69,7 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
   const onLogin = async (values: LoginValues) => {
     try {
       await dispatch(login(values));
-      navigate(DASHBOARD_ROUTE);
+      navigate(RoutePaths.DASHBOARD_ROUTE);
     } catch (error) {
       console.error('Login error', error);
     }
@@ -87,7 +87,7 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
         phoneNum: 1234567890,
       }),
     );
-    navigate(DASHBOARD_ROUTE);
+    navigate(RoutePaths.DASHBOARD_ROUTE);
   };
 
   const onSubmitSuccess: (values: LoginValues) => void = values => {
@@ -100,9 +100,9 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
 
   const handleToggleClick = () => {
     if (formType === 'login') {
-      navigate(REGISTRATION_ROUTE);
+      navigate(RoutePaths.REGISTRATION_ROUTE);
     } else {
-      navigate(LOGIN_ROUTE);
+      navigate(RoutePaths.LOGIN_ROUTE);
     }
   };
 

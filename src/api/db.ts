@@ -15,7 +15,7 @@ import {
 import { db, auth, storage, realtimeDb } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
-import { ref as dbRef, set, onValue } from 'firebase/database';
+import { ref as dbRef, set } from 'firebase/database';
 
 export interface User {
   firstName?: string;
@@ -114,34 +114,36 @@ export async function updateUserProfile(user: User, firstName: string, lastName:
   return updatedUser;
 }
 
-export async function uploadFile(file: File, userId: string) {
-  const storageRef = ref(storage, `AvatarProfile/${userId}`);
-  const uploadTask = uploadBytesResumable(storageRef, file);
+export async function uploadFile(user: User, file: File, userId: string) {
+  const userDocRef = doc(db, 'users', user.id);
 
-  await uploadTask;
+  try {
+    const storageRef = ref(storage, `AvatarProfile/${userId}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
-  const url = await getDownloadURL(storageRef);
-  return url;
+    await uploadTask;
+    const url = await getDownloadURL(storageRef);
+    await updateDoc(userDocRef, {
+      avatarUrl: url,
+    });
+    const updatedUser = { ...user, avatarUrl: url };
+
+    return updatedUser;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
 }
 
 export async function saveAvatarUrl(userId: string, avatarUrl: string) {
-  await set(dbRef(realtimeDb, 'users/' + userId), {
-    avatarUrl: avatarUrl,
-  });
-}
-
-export function loadAvatarUrl(userId: string) {
-  return new Promise((resolve, reject) => {
-    const avatarUrlRef = dbRef(realtimeDb, 'users/' + userId + '/avatarUrl');
-    onValue(avatarUrlRef, snapshot => {
-      const avatarUrl = snapshot.val();
-      if (avatarUrl) {
-        resolve(avatarUrl);
-      } else {
-        reject('No avatar URL found');
-      }
+  try {
+    await set(dbRef(realtimeDb, 'users/' + userId), {
+      avatarUrl: avatarUrl,
     });
-  });
+  } catch (error) {
+    console.error('Error saving avatar URL:', error);
+    throw error;
+  }
 }
 
 export const deleteAvatar = async (avatarUrl: string) => {

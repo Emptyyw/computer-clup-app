@@ -13,8 +13,6 @@ import {
   firebaseLogout,
   updateUserProfile,
   uploadFile,
-  saveAvatarUrl,
-  loadAvatarUrl,
   deleteAvatar,
 } from 'api/db';
 import { RootState } from 'store/store';
@@ -45,11 +43,6 @@ const initialState: AuthState = {
   isAuthenticated: false,
   token: null,
 };
-
-interface SaveUserAvatarArgs {
-  userId: string;
-  avatarUrl: string;
-}
 
 export const register = createAsyncThunk('auth/register', registerUser);
 export const login = createAsyncThunk('auth/login', loginUser);
@@ -97,7 +90,7 @@ export const uploadAvatar = createAsyncThunk(
   async (file: File, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     try {
-      const url = await uploadFile(file, state.user.id);
+      const url = await uploadFile(state.user, file, state.user.id);
       return url;
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error);
@@ -105,21 +98,6 @@ export const uploadAvatar = createAsyncThunk(
   },
 );
 
-export const saveUserAvatar = createAsyncThunk(
-  'user/saveAvatarUrl',
-  async ({ userId, avatarUrl }: SaveUserAvatarArgs) => {
-    await saveAvatarUrl(userId, avatarUrl);
-    return avatarUrl;
-  },
-);
-
-export const loadUserAvatar = createAsyncThunk(
-  'user/loadAvatarUrl',
-  async (userId: string) => {
-    const avatarUrl = loadAvatarUrl(userId);
-    return avatarUrl;
-  },
-);
 export const deleteUserAvatar = createAsyncThunk(
   'user/deleteAvatar',
   async (avatarUrl: string) => {
@@ -165,30 +143,25 @@ const authSlice = createSlice({
       if (action.payload) {
         state.status = 'succeeded';
         state.user = action.payload;
+        state.isAuthenticated = true;
       }
     });
     builder.addCase(updateProfile.fulfilled, (state, action) => {
       if (action.payload) {
         state.status = 'succeeded';
         state.user = action.payload;
+        state.isAuthenticated = true;
       }
     });
     builder.addCase(uploadAvatar.fulfilled, (state, action) => {
       if (action.payload) {
+        state.user.avatarUrl = action.payload.avatarUrl;
         state.status = 'succeeded';
-        state.user.avatarUrl = action.payload;
-      }
-    });
-    builder.addCase(saveUserAvatar.fulfilled, (state, action) => {
-      state.avatarUrl = action.payload;
-    });
-    builder.addCase(loadUserAvatar.fulfilled, (state, action) => {
-      if (typeof action.payload === 'string') {
-        state.user.avatarUrl = action.payload;
       }
     });
     builder.addCase(deleteUserAvatar.fulfilled, state => {
       state.user.avatarUrl = '';
+      state.isAuthenticated = true;
     });
     builder
       .addCase(logout.fulfilled, state => {

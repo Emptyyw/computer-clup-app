@@ -13,7 +13,7 @@ import { IconCheck } from '@tabler/icons-react';
 import classes from './HomePage.module.css';
 import image from 'assets/logo/shuriken.png';
 import { useNavigate } from 'react-router-dom';
-import { REGISTRATION_ROUTE } from 'utils/constsRoutes';
+import { RoutePaths } from 'Enum/Enum';
 import { GoogleButton } from 'components/shared/AuthButton/GoogleButton';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +22,7 @@ function HomePage() {
   const { t } = useTranslation();
 
   const handleSignupClick = () => {
-    navigate(REGISTRATION_ROUTE);
+    navigate(RoutePaths.REGISTRATION_ROUTE);
   };
 
   return (

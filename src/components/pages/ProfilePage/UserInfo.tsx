@@ -50,13 +50,13 @@ function UserInfo() {
 
   return (
     <>
-      <div className={classes.wrapper}>
+      <Paper className={classes.wrapper}>
         <Paper className={classes.paper}>
           <AvatarUpload />
         </Paper>
 
         <Group p="md" wrap="nowrap">
-          <div className={classes.item}>
+          <Paper className={classes.item}>
             <Text fz="lg" tt="uppercase" fw={700} c="dimmed">
               {auth.firstName} {auth.lastName}
             </Text>
@@ -78,12 +78,12 @@ function UserInfo() {
                 {auth.phoneNum}
               </Text>
             </Group>
-          </div>
+          </Paper>
         </Group>
         <ActionIcon onClick={handleModal} radius="lg" variant="subtle" size="xl">
           <IconSettings />
         </ActionIcon>
-      </div>
+      </Paper>
     </>
   );
 }

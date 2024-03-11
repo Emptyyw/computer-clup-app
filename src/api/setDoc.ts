@@ -14,6 +14,7 @@ export async function saveUserToDb(
   lastName?: string,
   firstName?: string,
   phoneNum?: number,
+  avatarUrl?: string,
 ) {
   const user = userCredential.user;
   if (user) {
@@ -25,6 +26,7 @@ export async function saveUserToDb(
       email: user.email || '',
       id: user.uid,
       role,
+      avatarUrl,
     };
 
     const userDocRef = doc(db, 'users', user.uid);

@@ -11,6 +11,8 @@
 }
 
 .mainLink {
+  text-decoration: none;
+
   text-transform: uppercase;
   font-size: var(--mantine-font-size-xs);
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-1));

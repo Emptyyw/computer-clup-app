@@ -68,10 +68,11 @@
   "search": {
     "searchPlaceholder": "Search..."
   },
-
+  "profile": {},
   "Teams": "Teams",
   "Friends": "Friends",
   "Statistics": "Statistics",
+
   "userinfo": {
     "Enter your data": "Enter your data",
     "Your Name": "Your Name",

@@ -6,7 +6,7 @@ import { GoogleIcon } from './GoogleIcon';
 import { authGoogle, updateLogin } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
 import { useTranslation } from 'react-i18next';
-import { DASHBOARD_ROUTE } from 'utils/constsRoutes';
+import { RoutePaths } from 'Enum/Enum';
 import { User } from 'api/db';
 
 type Props = ButtonProps;
@@ -37,7 +37,7 @@ export const GoogleButton: FC<Props> = props => {
         ),
       });
     } else {
-      navigate(DASHBOARD_ROUTE);
+      navigate(RoutePaths.DASHBOARD_ROUTE);
     }
   };
 
@@ -47,7 +47,7 @@ export const GoogleButton: FC<Props> = props => {
       try {
         await dispatch(updateLogin({ user: user, newLogin: newLogin }));
         modals.closeAll();
-        navigate(DASHBOARD_ROUTE);
+        navigate(RoutePaths.DASHBOARD_ROUTE);
       } catch (error) {
         console.error(error);
       }

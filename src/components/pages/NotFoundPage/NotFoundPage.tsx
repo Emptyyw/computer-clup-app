@@ -7,8 +7,8 @@ import {
   SimpleGrid,
   useComputedColorScheme,
 } from '@mantine/core';
-import imageDark from 'assets/404page/ninja404.png';
-import ImageWhite from 'assets/404page/ninja404White.png';
+import imageDark from 'assets/404page/ninjadark.png';
+import ImageWhite from 'assets/404page/ninjawithe.png';
 import classes from 'components/pages/NotFoundPage/NotFoundPage.module.css';
 import { auth } from 'firebase/firebase';
 import { useTranslation } from 'react-i18next';
