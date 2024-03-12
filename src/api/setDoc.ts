@@ -13,7 +13,6 @@ export async function saveUserToDb(
   role: string,
   lastName?: string,
   firstName?: string,
-  phoneNum?: number,
   avatarUrl?: string,
 ) {
   const user = userCredential.user;
@@ -21,14 +20,14 @@ export async function saveUserToDb(
     const userData: User = {
       firstName,
       lastName,
-      phoneNum,
       login,
       email: user.email || '',
       id: user.uid,
       role,
-      avatarUrl,
     };
-
+    if (avatarUrl !== undefined) {
+      userData.avatarUrl = avatarUrl;
+    }
     const userDocRef = doc(db, 'users', user.uid);
     await setDoc(userDocRef, userData);
 

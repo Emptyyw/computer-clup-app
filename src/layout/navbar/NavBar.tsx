@@ -1,51 +1,26 @@
-import { useEffect } from 'react';
-import { Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
-import { IconHome2, IconGauge, IconFingerprint, IconLogout } from '@tabler/icons-react';
+import { Stack } from '@mantine/core';
+import { IconLogout } from '@tabler/icons-react';
 import classes from './NavBar.module.css';
 import { RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from 'hooks/useAuth';
 import { persistor, useAppDispatch } from 'store/store';
 import { logout } from 'redux/slice/userSlice';
-interface NavbarLinkProps {
-  icon: typeof IconHome2;
-  label: string;
-  active?: boolean;
-  onClick?(): void;
-}
+import { NavbarLink, NavbarLinks } from './NavBarLinks/NavLinks';
+import { FC, useEffect } from 'react';
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-  return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-      <UnstyledButton
-        onClick={onClick}
-        className={`${classes.link} ${active ? classes.active : ''}`}
-        data-active={active || undefined}
-      >
-        <Icon style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-      </UnstyledButton>
-    </Tooltip>
-  );
-}
-
-const mockdata = [
-  { icon: IconGauge, label: 'Dashboard', route: RoutePaths.DASHBOARD_ROUTE },
-  { icon: IconFingerprint, label: 'Security', route: RoutePaths.ADMIN_ROUTE },
-];
-
-export function Navbar() {
+export const Navbar: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const auth = useAuth();
-  const isAdmin = auth && auth.role === 'admin';
   const dispatch = useAppDispatch();
+  const user = useAppSelector(getUser);
 
   useEffect(() => {
-    if (!auth) {
+    if (!user) {
       navigate(RoutePaths.LOGIN_ROUTE);
     }
-  }, [auth, navigate]);
+  }, [navigate, user]);
 
   const handleLogout = async () => {
     try {
@@ -57,23 +32,10 @@ export function Navbar() {
     }
   };
 
-  const links = mockdata
-    .filter(link => link.label !== 'Security' || isAdmin)
-    .map(link => (
-      <NavbarLink
-        {...link}
-        key={link.label}
-        active={location.pathname === link.route}
-        onClick={() => navigate(link.route)}
-      />
-    ));
-
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
-        <Stack justify="center" gap={0}>
-          {links}
-        </Stack>
+        <NavbarLinks navigate={navigate} location={location} />
       </div>
 
       <Stack justify="center" gap={0}>
@@ -81,4 +43,4 @@ export function Navbar() {
       </Stack>
     </nav>
   );
-}
+};
