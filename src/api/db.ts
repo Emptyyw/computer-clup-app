@@ -8,22 +8,22 @@ import {
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { db, auth, storage, realtimeDb } from 'firebase/firebase';
+import { auth, db, realtimeDb, storage } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
 import { ref as dbRef, set } from 'firebase/database';
 
 export interface User {
+  id: string;
   firstName?: string;
   lastName?: string;
   phoneNum?: number;
   login: string;
   email: string;
-  id: string;
   role: string;
   avatarUrl?: string;
 }

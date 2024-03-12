@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import App from 'App.tsx';
+import { App } from 'App';
 import './index.css';
 import { MantineProvider, createTheme, MantineColorsTuple } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
@@ -9,10 +9,10 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import i18next from 'i18next';
 
-const myColor: MantineColorsTuple = [
+export const myColor: MantineColorsTuple = [
   '#00D6C1',
   '#00D6C1',
-  '#00D6C1',
+  '#e6a607',
   '#00D6C1',
   '#00D6C1',
   '#00D6C1',
@@ -25,6 +25,13 @@ const myColor: MantineColorsTuple = [
 const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
   primaryColor: 'myColor',
+  breakpoints: {
+    xs: '30em',
+    sm: '900px',
+    md: '64em',
+    lg: '74em',
+    xl: '90em',
+  },
 
   colors: {
     myColor,

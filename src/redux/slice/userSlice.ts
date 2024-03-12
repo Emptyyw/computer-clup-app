@@ -29,11 +29,11 @@ export interface AuthState {
 
 const initialState: AuthState = {
   user: {
+    id: '',
     firstName: '',
     lastName: '',
     login: '',
     email: '',
-    id: '',
     role: '',
     avatarUrl: '',
   },
