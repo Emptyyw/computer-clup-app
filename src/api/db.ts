@@ -12,6 +12,7 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
+ 
 import { auth, db, storage } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
