@@ -1,10 +1,11 @@
 import { Avatar, Paper } from '@mantine/core';
-import { useAuth } from 'hooks/useAuth';
 import AvatarButton from 'components/shared/AvatarButton/AvatarButton';
 import classes from './UploadAvatar.module.css';
+import { getUser } from 'redux/selectors/userSelectors';
+import { useAppSelector } from 'hooks/redux-hooks';
 
 const AvatarUpload = () => {
-  const auth = useAuth();
+  const auth = useAppSelector(getUser);
 
   return (
     <Paper className={classes.avatarContainer}>

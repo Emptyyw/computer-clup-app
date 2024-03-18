@@ -49,7 +49,7 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
     initialValues: {
       email: 'admin@clubapp.com',
       name: '',
-      password: '123123123',
+      password: '123123123sss',
       terms: true,
       login: '',
       userId: '',
@@ -69,7 +69,7 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
   const onLogin = async (values: LoginValues) => {
     try {
       await dispatch(login(values));
-      navigate(RoutePaths.DASHBOARD_ROUTE);
+      navigate(RoutePaths.PROFILE_ROUTE);
     } catch (error) {
       console.error('Login error', error);
     }

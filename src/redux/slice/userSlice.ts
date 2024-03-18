@@ -44,6 +44,28 @@ const initialState: AuthState = {
   token: null,
 };
 
+interface IProfileUpdate {
+  user: User;
+  firstName: string;
+  lastName: string;
+}
+
+interface IUpdateLogin {
+  user: User;
+  newLogin: string;
+}
+
+interface IUserAvatarUploadResponse {
+  avatarUrl?: string | undefined;
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNum?: number;
+  login: string;
+  email: string;
+  role: string;
+}
+
 export const register = createAsyncThunk('auth/register', registerUser);
 export const login = createAsyncThunk('auth/login', loginUser);
 
@@ -59,12 +81,9 @@ export const authGoogle = createAsyncThunk<User | undefined, string>(
   },
 );
 
-export const updateProfile = createAsyncThunk(
+export const updateProfile = createAsyncThunk<User, IProfileUpdate>(
   'auth/updateProfile',
-  async (
-    { user, firstName, lastName }: { user: User; firstName: string; lastName: string },
-    thunkAPI,
-  ) => {
+  async ({ user, firstName, lastName }: IProfileUpdate, thunkAPI) => {
     try {
       const updatedUser = await updateUserProfile(user, firstName, lastName);
       return updatedUser;
@@ -73,9 +92,10 @@ export const updateProfile = createAsyncThunk(
     }
   },
 );
-export const updateLogin = createAsyncThunk(
+
+export const updateLogin = createAsyncThunk<User, IUpdateLogin>(
   'auth/updateLogin',
-  async ({ user, newLogin }: { user: User; newLogin: string }, thunkAPI) => {
+  async ({ user, newLogin }: IUpdateLogin, thunkAPI) => {
     try {
       const updatedUser = await updateUserLogin(user, newLogin);
       return updatedUser;
@@ -85,7 +105,7 @@ export const updateLogin = createAsyncThunk(
   },
 );
 
-export const uploadAvatar = createAsyncThunk(
+export const uploadAvatar = createAsyncThunk<string | IUserAvatarUploadResponse, File>(
   'auth/uploadAvatar',
   async (file: File, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
@@ -98,7 +118,7 @@ export const uploadAvatar = createAsyncThunk(
   },
 );
 
-export const deleteUserAvatar = createAsyncThunk(
+export const deleteUserAvatar = createAsyncThunk<string, string>(
   'user/deleteAvatar',
   async (avatarUrl: string) => {
     await deleteAvatar(avatarUrl);
@@ -106,9 +126,9 @@ export const deleteUserAvatar = createAsyncThunk(
   },
 );
 
-export const logout = createAsyncThunk('user/logout', async () => {
+export const logout = createAsyncThunk<string, void>('user/logout', async () => {
   await firebaseLogout();
-  return {};
+  return '{}';
 });
 
 const authSlice = createSlice({
@@ -116,46 +136,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder
-      .addCase(register.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.status = 'succeeded';
-          state.user = action.payload;
-          state.isAuthenticated = true;
-        }
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.status = 'succeeded';
-          state.user = action.payload;
-          state.role = action.payload.role;
-          state.isAuthenticated = true;
-        }
-      })
-      .addCase(authGoogle.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.status = 'succeeded';
-          state.user = action.payload;
-          state.isAuthenticated = true;
-        }
-      });
-    builder.addCase(updateLogin.fulfilled, (state, action) => {
+    builder.addCase(login.fulfilled, (state, action) => {
       if (action.payload) {
         state.status = 'succeeded';
         state.user = action.payload;
-        state.isAuthenticated = true;
-      }
-    });
-    builder.addCase(updateProfile.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.status = 'succeeded';
-        state.user = action.payload;
+        state.role = action.payload.role;
         state.isAuthenticated = true;
       }
     });
     builder.addCase(uploadAvatar.fulfilled, (state, action) => {
       if (action.payload) {
-        state.user.avatarUrl = action.payload.avatarUrl;
+        const avatarUrl =
+          typeof action.payload === 'string' ? action.payload : action.payload.avatarUrl;
+        state.user.avatarUrl = avatarUrl;
         state.status = 'succeeded';
       }
     });
@@ -175,6 +168,22 @@ const authSlice = createSlice({
         };
         state.role = '';
       })
+      .addMatcher(
+        action =>
+          [
+            authGoogle.fulfilled.type,
+            updateLogin.fulfilled.type,
+            updateProfile.fulfilled.type,
+            register.fulfilled.type,
+          ].includes(action.type),
+        (state, action: PayloadAction<User>) => {
+          if (action.payload) {
+            state.status = 'succeeded';
+            state.user = action.payload;
+            state.isAuthenticated = true;
+          }
+        },
+      )
       .addMatcher(
         action => action.type.endsWith('/pending'),
         state => {
