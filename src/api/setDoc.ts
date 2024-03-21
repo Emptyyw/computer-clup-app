@@ -1,7 +1,7 @@
-import { doc, setDoc } from 'firebase/firestore';
 import { db } from 'firebase/firebase';
 import { User } from 'api/db';
 import { UserCredential } from 'firebase/auth';
+import { doc, setDoc } from '@firebase/firestore';
 
 export function getFirestore() {
   return db;
