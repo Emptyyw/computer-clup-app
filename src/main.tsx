@@ -26,9 +26,9 @@ const theme = createTheme({
   fontFamily: 'Open Sans, sans-serif',
   primaryColor: 'myColor',
   breakpoints: {
-    xs: '30em',
-    sm: '900px',
-    md: '64em',
+    xs: '550px',
+    sm: '630px',
+    md: '901px',
     lg: '74em',
     xl: '90em',
   },

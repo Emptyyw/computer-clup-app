@@ -30,7 +30,6 @@ export async function saveUserToDb(
     }
     const userDocRef = doc(db, 'users', user.uid);
     await setDoc(userDocRef, userData);
-
     return userData;
   } else {
     throw new Error('User saving failed');

@@ -25,3 +25,7 @@ export enum RoutePaths {
   PROFILE_STATISTICS_ROUTE = '/statistics',
   PROFILE_TEAMS_ROUTE = '/teams',
 }
+
+export enum CollectionPaths {
+  USERS = 'users',
+}

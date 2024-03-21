@@ -1,4 +1,15 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import {
   deleteObject,
   getDownloadURL,
@@ -15,6 +26,7 @@ import {
 import { auth, db, storage } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
+import { CollectionPaths } from 'Enum/Enum';
 
 export interface User {
   id: string;
@@ -57,6 +69,7 @@ export async function registerUser({
 
   return saveUserToDb(userCredential, login, role, firstName, lastName);
 }
+
 export async function loginUser({ email, password }: LoginUserParams) {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
@@ -141,3 +154,35 @@ export const deleteAvatar = async (avatarUrl: string) => {
 export function firebaseLogout() {
   return signOut(auth);
 }
+
+export const searchFirestoreDbByField = async <T extends DocumentData>(
+  path: CollectionPaths,
+  field: keyof T,
+  searchQuery: string,
+  limitCollection: number = 10,
+): Promise<T[] | null> => {
+  const collectionRef = collection(db, path);
+
+  const querySnapshot = await getDocs(
+    query(
+      collectionRef,
+      where(field.toString(), '>=', searchQuery),
+      where(field.toString(), '<=', searchQuery + '\uf8ff'),
+      orderBy(field.toString()),
+      limit(limitCollection),
+    ),
+  );
+
+  if (querySnapshot.empty) {
+    return [];
+  }
+
+  const docData: T[] = [];
+
+  querySnapshot.forEach(docSnapshot => {
+    const data = docSnapshot.data() as T;
+    docData.push(data);
+  });
+
+  return docData;
+};

@@ -55,7 +55,8 @@
     "backButton": "Вернуться на домашнюю страницу"
   },
   "search": {
-    "searchPlaceholder": "Поиск пользователей..."
+    "searchPlaceholder": "Поиск пользователей...",
+    "emptyText" : "Пользователь не найден"
   },
 
   "profile": {},

@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@mantine/hooks';
-import { RoutePaths } from 'Enum/Enum.ts';
+import { RoutePaths } from 'Enum/Enum';
+// import i18n from 'i18next';
 
 export const AppLogo: FC = () => {
-  const isMatches = useMediaQuery('(max-width: 440px)');
+  const isMatches = useMediaQuery('(max-width: 460px)');
 
   const navigate = useNavigate();
 
