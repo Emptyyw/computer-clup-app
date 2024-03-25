@@ -19,6 +19,7 @@ export const GoogleButton: FC<Props> = props => {
 
   const handleSignInWithGoogle = async () => {
     const actionResult = await dispatch(authGoogle(loginRef.current));
+
     const user = actionResult.payload as User;
     if (!user.login) {
       modals.open({

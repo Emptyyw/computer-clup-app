@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Stack } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 import classes from './NavBar.module.css';
@@ -5,22 +6,24 @@ import { RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { persistor, useAppDispatch } from 'store/store';
 import { logout } from 'redux/slice/userSlice';
-import { NavbarLink, NavbarLinks } from './NavBarLinks/NavLinks';
-import { FC, useEffect } from 'react';
 import { useAppSelector } from 'hooks/redux-hooks';
 import { getUser } from 'redux/selectors/userSelectors';
+import { mockdata } from 'config/navbarConfig';
+import { NavActive } from 'src/layout/navbar/NavBarLinksActive/NavActive';
 
-export const Navbar: FC = () => {
+export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const auth = useAppSelector(getUser);
+  const isAdmin = auth && auth.role === 'admin';
   const dispatch = useAppDispatch();
-  const user = useAppSelector(getUser);
 
   useEffect(() => {
-    if (!user) {
+    if (!auth) {
       navigate(RoutePaths.LOGIN_ROUTE);
     }
-  }, [navigate, user]);
+  }, [auth, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -32,14 +35,27 @@ export const Navbar: FC = () => {
     }
   };
 
+  const links = mockdata
+    .filter(link => link.label !== 'Security' || isAdmin)
+    .map(link => (
+      <NavActive
+        {...link}
+        key={link.label}
+        active={location.pathname === link.route}
+        onClick={() => navigate(link.route)}
+      />
+    ));
+
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
-        <NavbarLinks navigate={navigate} location={location} />
+        <Stack justify="center" gap={0}>
+          {links}
+        </Stack>
       </div>
 
       <Stack justify="center" gap={0}>
-        <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
+        <NavActive icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
     </nav>
   );

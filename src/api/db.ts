@@ -96,7 +96,6 @@ export async function signInWithGoogle(login: string) {
 export async function updateUserLogin(user: User, newLogin: string) {
   const userDocRef = doc(db, 'users', user.id);
   await updateDoc(userDocRef, { login: newLogin });
-
   const updatedUser = { ...user, login: newLogin };
   return updatedUser;
 }

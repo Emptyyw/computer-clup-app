@@ -47,9 +47,9 @@ const AuthenticationForm: FC<Props> = ({ type: formType, ...props }) => {
 
   const form = useForm({
     initialValues: {
-      email: 'admin@clubapp.com',
+      email: '',
       name: '',
-      password: '123123123sss',
+      password: '',
       terms: true,
       login: '',
       userId: '',

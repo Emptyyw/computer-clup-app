@@ -2,7 +2,9 @@ import {
   createSlice,
   createAsyncThunk,
   PayloadAction,
-  SerializedError,
+  isAllOf,
+  isPending,
+  isRejected,
 } from '@reduxjs/toolkit';
 import {
   User,
@@ -136,46 +138,36 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(login.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.status = 'succeeded';
-        state.user = action.payload;
-        state.role = action.payload.role;
-        state.isAuthenticated = true;
-      }
-    });
-    builder.addCase(uploadAvatar.fulfilled, (state, action) => {
-      if (action.payload) {
-        const avatarUrl =
-          typeof action.payload === 'string' ? action.payload : action.payload.avatarUrl;
-        state.user.avatarUrl = avatarUrl;
-        state.status = 'succeeded';
-      }
-    });
-    builder.addCase(deleteUserAvatar.fulfilled, state => {
-      state.user.avatarUrl = '';
-      state.isAuthenticated = true;
-    });
     builder
-      .addCase(logout.fulfilled, state => {
-        state.isAuthenticated = false;
-        state.token = null;
-        state.user = {
-          login: '',
-          email: '',
-          id: '',
-          role: '',
-        };
-        state.role = '';
+      .addCase(login.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.status = 'succeeded';
+          state.user = action.payload;
+          state.role = action.payload.role;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        if (action.payload) {
+          const avatarUrl =
+            typeof action.payload === 'string'
+              ? action.payload
+              : action.payload.avatarUrl;
+          state.user.avatarUrl = avatarUrl;
+          state.status = 'succeeded';
+        }
+      })
+      .addCase(deleteUserAvatar.fulfilled, state => {
+        state.user.avatarUrl = '';
+        state.isAuthenticated = true;
       })
       .addMatcher(
-        action =>
-          [
-            authGoogle.fulfilled.type,
-            updateLogin.fulfilled.type,
-            updateProfile.fulfilled.type,
-            register.fulfilled.type,
-          ].includes(action.type),
+        isAllOf(
+          authGoogle.fulfilled,
+          updateLogin.fulfilled,
+          updateProfile.fulfilled,
+          register.fulfilled,
+        ),
         (state, action: PayloadAction<User>) => {
           if (action.payload) {
             state.status = 'succeeded';
@@ -184,21 +176,13 @@ const authSlice = createSlice({
           }
         },
       )
-      .addMatcher(
-        action => action.type.endsWith('/pending'),
-        state => {
-          state.status = 'loading';
-        },
-      )
-      .addMatcher(
-        action => action.type.endsWith('/rejected'),
-        (state, action: PayloadAction<SerializedError>) => {
-          state.status = 'failed';
-          if (action.payload) {
-            state.error = action.payload.message;
-          }
-        },
-      );
+      .addMatcher(isPending, state => {
+        state.status = 'loading';
+      })
+
+      .addMatcher(isRejected, state => {
+        state.status = 'failed';
+      });
   },
 });
 export default authSlice.reducer;

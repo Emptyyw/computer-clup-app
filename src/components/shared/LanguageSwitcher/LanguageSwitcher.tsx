@@ -5,12 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { langSwitcher } from 'Enum/Enum';
 import { data } from 'config/languageConfig';
 
+interface LanguageItem {
+  label: string;
+  image: string;
+  code: string;
+}
+
 export const LanguageSwitcher: FC = () => {
   const { i18n } = useTranslation();
   const savedLanguage = localStorage.getItem('language');
   const initialLanguage = data.find(item => item.code === savedLanguage) || data[0];
   const [opened, setOpened] = useState(false);
-  const [selected, setSelected] = useState(initialLanguage);
+  const [selected, setSelected] = useState<LanguageItem>(initialLanguage);
 
   const setLang = (item: { label: string; image: string; code: string }) => {
     return () => {

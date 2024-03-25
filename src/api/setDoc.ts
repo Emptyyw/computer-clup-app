@@ -20,12 +20,12 @@ export async function saveUserToDb(
     const userData: User = {
       firstName,
       lastName,
-      login,
+      login: login,
       email: user.email || '',
       id: user.uid,
       role,
     };
-    if (avatarUrl !== undefined) {
+    if (avatarUrl) {
       userData.avatarUrl = avatarUrl;
     }
     const userDocRef = doc(db, 'users', user.uid);
