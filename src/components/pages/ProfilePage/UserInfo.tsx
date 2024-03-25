@@ -2,15 +2,16 @@ import { Text, Group, TextInput, Button, ActionIcon, Paper } from '@mantine/core
 import { modals } from '@mantine/modals';
 import { IconPhoneCall, IconAt } from '@tabler/icons-react';
 import classes from 'components/pages/ProfilePage/UserInfo.module.css';
-import { useAuth } from 'hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { updateProfile } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
 import { IconSettings } from '@tabler/icons-react';
 import AvatarUpload from './UploadAvatar';
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
 
 function UserInfo() {
-  const auth = useAuth();
+  const auth = useAppSelector(getUser);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 

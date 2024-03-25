@@ -12,10 +12,9 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { auth, db, realtimeDb, storage } from 'firebase/firebase';
+import { auth, db, storage } from 'firebase/firebase';
 import 'firebase/firestore';
 import { saveUserToDb } from './setDoc';
-import { ref as dbRef, set } from 'firebase/database';
 
 export interface User {
   id: string;
@@ -58,7 +57,6 @@ export async function registerUser({
 
   return saveUserToDb(userCredential, login, role, firstName, lastName);
 }
-
 export async function loginUser({ email, password }: LoginUserParams) {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
@@ -98,7 +96,6 @@ export async function signInWithGoogle(login: string) {
 export async function updateUserLogin(user: User, newLogin: string) {
   const userDocRef = doc(db, 'users', user.id);
   await updateDoc(userDocRef, { login: newLogin });
-
   const updatedUser = { ...user, login: newLogin };
   return updatedUser;
 }
@@ -115,33 +112,23 @@ export async function updateUserProfile(user: User, firstName: string, lastName:
 }
 
 export async function uploadFile(user: User, file: File, userId: string) {
-  const userDocRef = doc(db, 'users', user.id);
-
   try {
     const storageRef = ref(storage, `AvatarProfile/${userId}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-
     await uploadTask;
+
     const url = await getDownloadURL(storageRef);
+
+    const userDocRef = doc(db, 'users', user.id);
     await updateDoc(userDocRef, {
       avatarUrl: url,
     });
+
     const updatedUser = { ...user, avatarUrl: url };
 
     return updatedUser;
   } catch (error) {
     console.error('Error uploading file:', error);
-    throw error;
-  }
-}
-
-export async function saveAvatarUrl(userId: string, avatarUrl: string) {
-  try {
-    await set(dbRef(realtimeDb, 'users/' + userId), {
-      avatarUrl: avatarUrl,
-    });
-  } catch (error) {
-    console.error('Error saving avatar URL:', error);
     throw error;
   }
 }

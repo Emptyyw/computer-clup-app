@@ -8,6 +8,11 @@ export enum langSwitcher {
   LangEn = 'en',
 }
 
+export enum language {
+  LangRu = 'ru',
+  LangEn = 'en',
+}
+
 export enum RoutePaths {
   LOGIN_ROUTE = '/login',
   REGISTRATION_ROUTE = '/register',

@@ -1,8 +1,9 @@
-import { useAuth } from 'hooks/useAuth';
 import { Text } from '@mantine/core';
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
 
 const Dashboard = () => {
-  const auth = useAuth();
+  const auth = useAppSelector(getUser);
 
   return (
     <>

@@ -1,12 +1,12 @@
-import { useAuth } from 'hooks/useAuth';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { adminRoutes, privateRoutes, publicRoutes } from '../../routes';
 import { RoutePaths } from 'Enum/Enum';
 import { useEffect, useState } from 'react';
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
 
 const AppRouter = () => {
-  const auth = useAuth();
-
+  const auth = useAppSelector(getUser);
   const [isAuthenticated, setIsAuthenticated] = useState(auth && !!auth.login);
   const [isAdmin, setIsAdmin] = useState(isAuthenticated && auth.role === 'admin');
 

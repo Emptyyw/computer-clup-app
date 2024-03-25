@@ -1,43 +1,21 @@
 import { useEffect } from 'react';
-import { Tooltip, UnstyledButton, Stack, rem } from '@mantine/core';
-import { IconHome2, IconGauge, IconFingerprint, IconLogout } from '@tabler/icons-react';
+import { Stack } from '@mantine/core';
+import { IconLogout } from '@tabler/icons-react';
 import classes from './NavBar.module.css';
 import { RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from 'hooks/useAuth';
 import { persistor, useAppDispatch } from 'store/store';
 import { logout } from 'redux/slice/userSlice';
-interface NavbarLinkProps {
-  icon: typeof IconHome2;
-  label: string;
-  active?: boolean;
-  onClick?(): void;
-}
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
+import { mockdata } from 'config/navbarConfig';
+import { NavActive } from 'src/layout/navbar/NavBarLinksActive/NavActive';
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-  return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-      <UnstyledButton
-        onClick={onClick}
-        className={`${classes.link} ${active ? classes.active : ''}`}
-        data-active={active || undefined}
-      >
-        <Icon style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
-      </UnstyledButton>
-    </Tooltip>
-  );
-}
-
-const mockdata = [
-  { icon: IconGauge, label: 'Dashboard', route: RoutePaths.DASHBOARD_ROUTE },
-  { icon: IconFingerprint, label: 'Security', route: RoutePaths.ADMIN_ROUTE },
-];
-
-export function Navbar() {
+export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const auth = useAuth();
+  const auth = useAppSelector(getUser);
   const isAdmin = auth && auth.role === 'admin';
   const dispatch = useAppDispatch();
 
@@ -60,7 +38,7 @@ export function Navbar() {
   const links = mockdata
     .filter(link => link.label !== 'Security' || isAdmin)
     .map(link => (
-      <NavbarLink
+      <NavActive
         {...link}
         key={link.label}
         active={location.pathname === link.route}
@@ -77,8 +55,8 @@ export function Navbar() {
       </div>
 
       <Stack justify="center" gap={0}>
-        <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
+        <NavActive icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
     </nav>
   );
-}
+};

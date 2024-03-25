@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { FileButton, Button, Group } from '@mantine/core';
-import { useAuth } from 'hooks/useAuth';
 import { deleteUserAvatar, uploadAvatar } from 'redux/slice/userSlice';
 import { useAppDispatch } from 'store/store';
 import { IconUpload, IconTrashX } from '@tabler/icons-react';
+import { useAppSelector } from 'hooks/redux-hooks';
+import { getUser } from 'redux/selectors/userSelectors';
 
 const AvatarButton = () => {
-  const [file, setFile] = useState<File | null>(null);
   const resetRef = useRef<() => void>(null);
   const dispatch = useAppDispatch();
-  const auth = useAuth();
+  const auth = useAppSelector(getUser);
 
   const handleFileChange = async (selectedFile: File | null) => {
     if (selectedFile) {
@@ -18,7 +18,6 @@ const AvatarButton = () => {
   };
 
   const clearFile = () => {
-    setFile(null);
     resetRef.current?.();
     dispatch(deleteUserAvatar(auth.id));
   };
@@ -36,7 +35,7 @@ const AvatarButton = () => {
         )}
       </FileButton>
 
-      <Button disabled={!file} radius="xl" color="red" onClick={clearFile}>
+      <Button disabled={!auth.avatarUrl} radius="xl" color="red" onClick={clearFile}>
         <IconTrashX />
       </Button>
     </Group>
