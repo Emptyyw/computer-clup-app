@@ -16,11 +16,14 @@ import {
   updateUserProfile,
   uploadFile,
   deleteAvatar,
+  searchFirestoreDbByField,
 } from 'api/db';
 import { RootState } from 'store/store';
+import { CollectionPaths } from 'Enum/Enum.ts';
 
 export interface AuthState {
   user: User;
+  searchUserResults: User[];
   role: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | undefined;
@@ -39,6 +42,7 @@ const initialState: AuthState = {
     role: '',
     avatarUrl: '',
   },
+  searchUserResults: [],
   role: '',
   status: 'idle',
   error: '',
@@ -133,6 +137,23 @@ export const logout = createAsyncThunk<string, void>('user/logout', async () => 
   return '{}';
 });
 
+export const searchUsersAsync = createAsyncThunk<User[] | null, string>(
+  'users/search',
+  async (searchQuery, thunkAPI) => {
+    try {
+      const users = await searchFirestoreDbByField<User>(
+        CollectionPaths.USERS,
+        'login',
+        searchQuery,
+      );
+
+      return users;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -161,12 +182,17 @@ const authSlice = createSlice({
         state.user.avatarUrl = '';
         state.isAuthenticated = true;
       })
+      .addCase(searchUsersAsync.fulfilled, (state, action) => {
+          state.searchUserResults = action.payload || [];
+          state.status = 'succeeded';
+      })
       .addMatcher(
         isAllOf(
           authGoogle.fulfilled,
           updateLogin.fulfilled,
           updateProfile.fulfilled,
           register.fulfilled,
+          searchUsersAsync.fulfilled,
         ),
         (state, action: PayloadAction<User>) => {
           if (action.payload) {
@@ -185,4 +211,5 @@ const authSlice = createSlice({
       });
   },
 });
+
 export default authSlice.reducer;

@@ -66,7 +66,8 @@
     "button": "Go back to home page"
   },
   "search": {
-    "searchPlaceholder": "Search for users here..."
+    "searchPlaceholder": "Search for users here...",
+    "emptyText" : "User not found"
   },
   "profile": {},
   "Teams": "Teams",

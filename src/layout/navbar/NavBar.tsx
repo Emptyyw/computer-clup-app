@@ -47,7 +47,7 @@ export const Navbar = () => {
     ));
 
   return (
-    <nav className={classes.navbar}>
+    <>
       <div className={classes.navbarMain}>
         <Stack justify="center" gap={0}>
           {links}
@@ -57,6 +57,6 @@ export const Navbar = () => {
       <Stack justify="center" gap={0}>
         <NavActive icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
-    </nav>
+    </>
   );
 };

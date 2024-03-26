@@ -1,20 +1,20 @@
 import { FC } from 'react';
 import { AppShell, Divider, Group, Paper } from '@mantine/core';
 import { Navbar } from 'layout/navbar/NavBar';
-import { InputSearch } from 'components/shared/search/InputSearch';
 import LanguageSwitcher from 'components/shared/LanguageSwitcher/LanguageSwitcher';
 import { ActionToggleTheme } from 'components/shared/ActionToggle/ActionToggleTheme';
 import { HeaderShoppingCart } from 'layout/header/HeaderShoppingCart/HeaderShoppingCart';
 import { HeaderNotify } from 'layout/header/HeaderNotify/HeaderNotify';
 import { HeaderUserProfile } from 'layout/header/HeaderUserProfile/HeaderUserProfile';
 import { useMediaQuery } from '@mantine/hooks';
+import { HeaderInputSearch } from 'src/layout/header/HeaderInputSearch/HeaderInputSearch';
 
 export const AuthenticatedContent: FC = () => {
-  const isMatches = useMediaQuery('(max-width: 899px)');
+  const isMatches = useMediaQuery('(max-width: 900px)');
 
   return (
     <Group>
-      <InputSearch />
+      <HeaderInputSearch />
 
       <AppShell.Navbar p="md">
         <Navbar />

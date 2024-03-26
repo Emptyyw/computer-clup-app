@@ -10,6 +10,7 @@ import { AuthenticatedContent } from 'layout/header/AuthenticatedContent/Authent
 import { UnauthenticatedContent } from 'layout/header/UnauthenticatedContent/UnauthenticatedContent';
 import { useAppSelector } from 'hooks/redux-hooks';
 import { getUser } from 'redux/selectors/userSelectors';
+import i18next from 'i18next';
 
 export const App: FC = () => {
   const user = useAppSelector(getUser);
@@ -26,7 +27,7 @@ export const App: FC = () => {
         }}
         navbar={{
           width: 100,
-          breakpoint: 'sm',
+          breakpoint: 'md',
           collapsed: { mobile: !opened },
         }}
         padding="md"
@@ -35,20 +36,19 @@ export const App: FC = () => {
           <Group h="100%" px="md" justify="space-between">
             <AppLogo />
 
-            {isAuthenticated ? (
-              <Group>
-                <AuthenticatedContent />
-                <Burger
-                  opened={opened}
-                  onClick={toggle}
-                  hiddenFrom="sm"
-                  size="sm"
-                  aria-label="Toggle headerNavbar"
-                />
-              </Group>
-            ) : (
-              <UnauthenticatedContent />
-            )}
+            <Group>
+              {isAuthenticated ? <AuthenticatedContent /> : <UnauthenticatedContent />}
+
+              <Burger
+                opened={opened}
+                onClick={toggle}
+                hiddenFrom={
+                  isAuthenticated ? 'md' : i18next.language === 'en' ? 'xs' : 'sm'
+                }
+                size="sm"
+                aria-label="Toggle headerNavbar"
+              />
+            </Group>
           </Group>
         </AppShell.Header>
 
