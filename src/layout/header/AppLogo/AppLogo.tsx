@@ -2,20 +2,25 @@ import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from '@mantine/hooks';
 import { RoutePaths } from 'Enum/Enum';
-// import i18n from 'i18next';
+import { useAuthUser } from 'hooks/useAuthUser';
 
 export const AppLogo: FC = () => {
+  const { isAuthenticated } = useAuthUser();
+
   const isMatches = useMediaQuery('(max-width: 460px)');
 
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
-    navigate(RoutePaths.HOME_ROUTE);
+    return isAuthenticated
+      ? navigate(RoutePaths.DASHBOARD_ROUTE)
+      : navigate(RoutePaths.HOME_ROUTE);
   };
 
   return (
     <svg
       onClick={handleHomeClick}
+      cursor="pointer"
       width={isMatches ? '80' : '100'}
       height="30"
       viewBox="0 0 109 27"

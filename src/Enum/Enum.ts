@@ -19,13 +19,18 @@ export enum RoutePaths {
   DASHBOARD_ROUTE = '/dashboard',
   HOME_ROUTE = '/',
   ADMIN_ROUTE = '/admin',
-  NOT_FOUND_ROUTE = '/404',
   PROFILE_ROUTE = '/profile',
   PROFILE_FRIENDS_ROUTE = '/friends',
   PROFILE_STATISTICS_ROUTE = '/statistics',
   PROFILE_TEAMS_ROUTE = '/teams',
+  ERROR_404 = '/error-404',
 }
 
 export enum CollectionPaths {
   USERS = 'users',
+}
+
+export enum Role {
+  ADMIN_ROLE = 'admin',
+  USER_ROLE = 'user',
 }

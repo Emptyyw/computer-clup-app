@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom/client';
-import { App } from 'App';
 import './index.css';
 import { MantineProvider, createTheme, MantineColorsTuple } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
@@ -8,12 +7,14 @@ import { Provider } from 'react-redux';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import i18next from 'i18next';
+import { RouterProvider } from 'react-router-dom';
+import { router } from 'routes/routes';
 
 export const myColor: MantineColorsTuple = [
   '#00D6C1',
   '#00D6C1',
   '#e6a607',
-  '#00D6C1',
+  '#a7a4a2',
   '#00D6C1',
   '#00D6C1',
   '#00D6C1',
@@ -65,7 +66,7 @@ Promise.all([
     <MantineProvider theme={theme}>
       <ModalsProvider>
         <Provider store={store}>
-          <App />
+          <RouterProvider router={router} />
         </Provider>
       </ModalsProvider>
     </MantineProvider>,

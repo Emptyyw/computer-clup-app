@@ -182,9 +182,18 @@ const authSlice = createSlice({
         state.user.avatarUrl = '';
         state.isAuthenticated = true;
       })
+      .addCase(logout.fulfilled, state => {
+        state.status = 'succeeded';
+        state.user = {
+          login: '',
+          id: '',
+          email: '',
+          role: '',
+        };
+      })
       .addCase(searchUsersAsync.fulfilled, (state, action) => {
-          state.searchUserResults = action.payload || [];
-          state.status = 'succeeded';
+        state.searchUserResults = action.payload || [];
+        state.status = 'succeeded';
       })
       .addMatcher(
         isAllOf(
@@ -192,6 +201,7 @@ const authSlice = createSlice({
           updateLogin.fulfilled,
           updateProfile.fulfilled,
           register.fulfilled,
+          logout.fulfilled,
           searchUsersAsync.fulfilled,
         ),
         (state, action: PayloadAction<User>) => {
