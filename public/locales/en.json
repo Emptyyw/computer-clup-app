@@ -62,8 +62,8 @@
   "login": "Login",
   "404": {
     "title": "Something is not right...",
-    "description": "Page you are trying to open does not exist. You may have mistyped the address, or the page has been moved to another URL. If you think this is an error contact support.",
-    "button": "Go back to home page"
+    "description": "Page you are trying to open does not exist. You may have made a typo, or the page may have been moved to a different URL. If you think this is an error contact support.",
+    "backButton": "Go back to home page"
   },
   "search": {
     "searchPlaceholder": "Search for users here...",
