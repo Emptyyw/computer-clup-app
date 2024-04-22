@@ -56,17 +56,35 @@
   },
   "search": {
     "searchPlaceholder": "Поиск пользователей...",
-    "emptyText" : "Пользователь не найден"
-  },
 
+    "emptyText": "Пользователь не найден"
+  },
   "profile": {},
   "Teams": "Команды",
   "Friends": "Друзья",
   "Statistics": "Статистика",
+
   "userinfo": {
     "Enter your data": "Введите свои данные",
     "Your Name": "Ваше имя",
     "Your Last Name": "Ваша фамилия",
     "Submit": "Отправить"
+  },
+  "editpage": {
+    "Enter user data": "Введите данные пользователя",
+    "Enter user name": "Введите имя пользователя",
+    "Enter user last name": "Введите фамилию пользователя",
+    "Enter user login": "Введите логин пользователя",
+    "Enter the user phone number": "Введите номер телефона пользователя",
+    "User ID": "Редактирование пользователя ID",
+    "Submit": "Отправить"
+  },
+  "clientpage": {
+    "Full name": "ФИО",
+    "Login": "Логин",
+    "Role": "Роль",
+    "Email": "Почта",
+    "Phone number": "Телефон",
+    "Balance": "Баланс"
   }
 }

@@ -35,26 +35,26 @@ export const Navbar = () => {
     }
   };
 
-  const links = mockdata
-    .filter(link => link.label !== 'Security' || isAdmin)
-    .map(link => (
-      <NavActive
-        {...link}
-        key={link.label}
-        active={location.pathname === link.route}
-        onClick={() => navigate(link.route)}
-      />
-    ));
-
   return (
     <>
       <div className={classes.navbarMain}>
-        <Stack justify="center" gap={0}>
-          {links}
+        <Stack align="center" justify="center" gap={0}>
+          {mockdata
+            .filter(link => {
+              return !link.requiredRole || (isAdmin && link.requiredRole === 'admin');
+            })
+            .map(link => (
+              <NavActive
+                {...link}
+                key={link.label}
+                active={location.pathname === link.route}
+                onClick={() => navigate(link.route)}
+              />
+            ))}
         </Stack>
       </div>
 
-      <Stack justify="center" gap={0}>
+      <Stack align="center" justify="center" gap={0}>
         <NavActive icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
     </>

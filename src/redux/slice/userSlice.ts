@@ -13,16 +13,20 @@ import {
   signInWithGoogle,
   updateUserLogin,
   firebaseLogout,
-  updateUserProfile,
   uploadFile,
   deleteAvatar,
+  getListUsers,
   searchFirestoreDbByField,
+  updateUserById,
+  getFirestoreUserById,
 } from 'api/db';
 import { RootState } from 'store/store';
 import { CollectionPaths } from 'Enum/Enum.ts';
+import { modals } from '@mantine/modals';
 
 export interface AuthState {
   user: User;
+  searchUser: User | null;
   searchUserResults: User[];
   role: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -42,6 +46,7 @@ const initialState: AuthState = {
     role: '',
     avatarUrl: '',
   },
+  searchUser: null,
   searchUserResults: [],
   role: '',
   status: 'idle',
@@ -50,10 +55,15 @@ const initialState: AuthState = {
   token: null,
 };
 
-interface IProfileUpdate {
-  user: User;
-  firstName: string;
-  lastName: string;
+export interface IProfileUpdateById {
+  updates: {
+    firstName: string;
+    lastName: string;
+    role?: string;
+    login?: string;
+    phoneNum?: string;
+  };
+  userId: string;
 }
 
 interface IUpdateLogin {
@@ -66,11 +76,13 @@ interface IUserAvatarUploadResponse {
   id: string;
   firstName?: string;
   lastName?: string;
-  phoneNum?: number;
+  phoneNum?: string;
   login: string;
   email: string;
   role: string;
 }
+
+type IListUsers = User[];
 
 export const register = createAsyncThunk('auth/register', registerUser);
 export const login = createAsyncThunk('auth/login', loginUser);
@@ -81,18 +93,6 @@ export const authGoogle = createAsyncThunk<User | undefined, string>(
     try {
       const user = await signInWithGoogle(login);
       return user;
-    } catch (error: unknown) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  },
-);
-
-export const updateProfile = createAsyncThunk<User, IProfileUpdate>(
-  'auth/updateProfile',
-  async ({ user, firstName, lastName }: IProfileUpdate, thunkAPI) => {
-    try {
-      const updatedUser = await updateUserProfile(user, firstName, lastName);
-      return updatedUser;
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -132,6 +132,11 @@ export const deleteUserAvatar = createAsyncThunk<string, string>(
   },
 );
 
+export const getUsers = createAsyncThunk<IListUsers>('user/listUser', async () => {
+  const userList = await getListUsers();
+  return userList;
+});
+
 export const logout = createAsyncThunk<string, void>('user/logout', async () => {
   await firebaseLogout();
   return '{}';
@@ -150,6 +155,38 @@ export const searchUsersAsync = createAsyncThunk<User[] | null, string>(
       return users;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
+export const updateUser = createAsyncThunk(
+  'user/updateByIdProfile',
+  async ({ userId, updates }: IProfileUpdateById, thunkAPI) => {
+    try {
+      const updatedUser = await updateUserById(userId, updates);
+      thunkAPI.dispatch(getUsers());
+      modals.closeAll();
+      return updatedUser;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+export const getUserById = createAsyncThunk<User, string | void>(
+  'auth/getUserById',
+  async (id, thunkAPI) => {
+    if (!id) {
+      throw new Error('User ID is missing');
+    }
+    try {
+      const getUser = await getFirestoreUserById(id);
+      if (getUser === null) {
+        throw new Error('User not found');
+      }
+
+      return getUser;
+    } catch (error) {
+      return thunkAPI.rejectWithValue((error as Error).message);
     }
   },
 );
@@ -182,6 +219,30 @@ const authSlice = createSlice({
         state.user.avatarUrl = '';
         state.isAuthenticated = true;
       })
+
+      .addCase(getUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.searchUserResults = action.payload;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.searchUser = action.payload;
+      })
+
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        if (action.payload) {
+          const updatedUser = action.payload;
+          if (updatedUser.id === state.user.id) {
+            state.user.role = updatedUser.role;
+            state.user.login = updatedUser.login;
+            state.user.firstName = updatedUser.firstName;
+            state.user.lastName = updatedUser.lastName;
+            state.user.phoneNum = updatedUser.phoneNum;
+          }
+        }
+      })
+
       .addCase(logout.fulfilled, state => {
         state.status = 'succeeded';
         state.user = {
@@ -195,11 +256,11 @@ const authSlice = createSlice({
         state.searchUserResults = action.payload || [];
         state.status = 'succeeded';
       })
+
       .addMatcher(
         isAllOf(
           authGoogle.fulfilled,
           updateLogin.fulfilled,
-          updateProfile.fulfilled,
           register.fulfilled,
           logout.fulfilled,
           searchUsersAsync.fulfilled,

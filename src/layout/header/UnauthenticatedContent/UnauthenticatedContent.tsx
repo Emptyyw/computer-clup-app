@@ -20,7 +20,6 @@ export const UnauthenticatedContent: FC = () => {
             <LanguageSwitcher />
             <ActionToggleTheme />
           </Group>
-
           <Divider my="md" />
         </AppShell.Navbar>
       )}

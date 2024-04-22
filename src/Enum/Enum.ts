@@ -24,6 +24,8 @@ export enum RoutePaths {
   PROFILE_STATISTICS_ROUTE = '/statistics',
   PROFILE_TEAMS_ROUTE = '/teams',
   ERROR_404 = '/error-404',
+  CLIENT_PAGE_ROUTE = '/client-page',
+  CLIENT_PROFILE_ROUTE = '/client-profile',
 }
 
 export enum CollectionPaths {

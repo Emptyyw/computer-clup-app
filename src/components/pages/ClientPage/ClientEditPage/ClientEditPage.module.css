@@ -1,0 +1,62 @@
+.icon {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+}
+
+.name {
+  font-family:
+    Greycliff CF,
+    var(--mantine-font-family);
+}
+
+.wrapper {
+  display: flex;
+  margin: 20px;
+}
+.paper {
+  flex: 0 0 200px;
+}
+
+.item {
+  flex: 1 0 auto;
+}
+
+.links {
+  padding-top: var(--mantine-spacing-lg);
+  height: rem(84px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mainLinks {
+  margin-right: calc(var(--mantine-spacing-sm) * -1);
+}
+
+.mainLink {
+  text-decoration: none;
+
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-1));
+  padding: rem(7px) var(--mantine-spacing-sm);
+  font-weight: 700;
+  border-bottom: rem(2px) solid transparent;
+  transition:
+    border-color 100ms ease,
+    color 100ms ease;
+
+  @mixin hover {
+    color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    text-decoration: none;
+  }
+
+  &[data-active] {
+    color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    border-bottom-color: var(--mantine-color-myColor-6);
+  }
+}
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+}

@@ -1,51 +1,22 @@
-import { Text, Group, TextInput, Button, ActionIcon, Paper } from '@mantine/core';
+import { Text, Group, ActionIcon, Paper } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPhoneCall, IconAt } from '@tabler/icons-react';
 import classes from 'components/pages/ProfilePage/UserInfo.module.css';
 import { useTranslation } from 'react-i18next';
-import { updateProfile } from 'redux/slice/userSlice';
-import { useAppDispatch } from 'store/store';
 import { IconSettings } from '@tabler/icons-react';
 import AvatarUpload from './UploadAvatar';
 import { useAppSelector } from 'hooks/redux-hooks';
 import { getUser } from 'redux/selectors/userSelectors';
+import { EditModalForm } from './ProfileEditForm/EditModalForm';
 
 function UserInfo() {
   const auth = useAppSelector(getUser);
-  const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
   const handleModal = () => {
-    let firstName = auth.firstName || '';
-    let lastName = auth.lastName || '';
-
-    const handleProfileUpdate = async () => {
-      dispatch(updateProfile({ user: auth, firstName, lastName }));
-      modals.closeAll();
-    };
-
     modals.open({
       title: t('userinfo.Enter your data'),
-      children: (
-        <>
-          <TextInput
-            p="md"
-            placeholder={t('userinfo.Your Name')}
-            data-autofocus
-            onChange={event => (firstName = event.currentTarget.value)}
-          />
-          <TextInput
-            p="md"
-            placeholder={t('userinfo.Your Last Name')}
-            data-autofocus
-            onChange={event => (lastName = event.currentTarget.value)}
-          />
-
-          <Button fullWidth onClick={handleProfileUpdate} mt="md">
-            {t('userinfo.Submit')}
-          </Button>
-        </>
-      ),
+      children: <EditModalForm />,
     });
   };
 

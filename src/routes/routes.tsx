@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { RoutePaths } from 'Enum/Enum';
 import { App } from 'App';
 import AuthenticationForm from 'components/Auth/AuthForm';
-import Dashboard from 'components/dashboard';
+import Dashboard from 'components/pages/Dashboard/dashboard';
 import HomePage from 'components/pages/HomePage/HomePage';
 import AdminPage from 'components/pages/AdminPage/AdminPage';
 import Profile from 'components/pages/ProfilePage/Profile';
@@ -13,6 +13,8 @@ import { Error404 } from 'components/pages/Error404/Error404';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { PrivateRoutes } from 'routes/PrivateRoutes';
 import { AdminRoutes } from 'routes/AdminRoutes';
+import ClientProfile from 'components/pages/ClientPage/ClientProfile/ClientProfile';
+import ClientPage from 'components/pages/ClientPage/ClientPage';
 
 export interface IRoute {
   path: string;
@@ -32,6 +34,7 @@ export const publicRoutes: IRoute[] = [
 
 export const adminRoutes: IRoute[] = [
   { path: RoutePaths.ADMIN_ROUTE, element: <AdminPage /> },
+  { path: RoutePaths.CLIENT_PAGE_ROUTE, element: <ClientPage /> },
   { path: RoutePaths.ERROR_404, element: <Error404 /> },
 ];
 
@@ -53,6 +56,24 @@ export const privateRoutes: IRoute[] = [
       },
       {
         path: `${RoutePaths.PROFILE_ROUTE}${RoutePaths.PROFILE_STATISTICS_ROUTE}`,
+        element: <Statistics />,
+      },
+    ],
+  },
+  {
+    path: `${RoutePaths.CLIENT_PROFILE_ROUTE}/:id`,
+    element: <ClientProfile />,
+    children: [
+      {
+        path: `${RoutePaths.CLIENT_PROFILE_ROUTE}/:id${RoutePaths.PROFILE_TEAMS_ROUTE}`,
+        element: <Teams />,
+      },
+      {
+        path: `${RoutePaths.CLIENT_PROFILE_ROUTE}/:id${RoutePaths.PROFILE_FRIENDS_ROUTE}`,
+        element: <Friends />,
+      },
+      {
+        path: `${RoutePaths.CLIENT_PROFILE_ROUTE}/:id${RoutePaths.PROFILE_STATISTICS_ROUTE}`,
         element: <Statistics />,
       },
     ],
