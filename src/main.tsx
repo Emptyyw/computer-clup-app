@@ -11,16 +11,16 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from 'routes/routes';
 
 export const myColor: MantineColorsTuple = [
-  '#00D6C1',
-  '#00D6C1',
+  '#00AD9C',
+  '#00AD9C',
   '#e6a607',
   '#a7a4a2',
-  '#00D6C1',
-  '#00D6C1',
-  '#00D6C1',
-  '#00D6C1',
-  '#00D6C1',
-  '#00D6C1',
+  '#00AD9C',
+  '#00AD9C',
+  '#00AD9C',
+  '#00AD9C',
+  '#00AD9C',
+  '#00AD9C',
 ];
 
 const theme = createTheme({
@@ -63,12 +63,12 @@ Promise.all([
     });
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
-    <MantineProvider theme={theme}>
-      <ModalsProvider>
-        <Provider store={store}>
+    <Provider store={store}>
+      <MantineProvider theme={theme}>
+        <ModalsProvider>
           <RouterProvider router={router} />
-        </Provider>
-      </ModalsProvider>
-    </MantineProvider>,
+        </ModalsProvider>
+      </MantineProvider>
+    </Provider>,
   );
 });

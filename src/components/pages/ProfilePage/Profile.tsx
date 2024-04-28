@@ -1,14 +1,20 @@
 import { Box, Group } from '@mantine/core';
 import UserInfo from 'components/pages/ProfilePage/UserInfo';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import classes from 'components/pages/ProfilePage/Profile.module.css';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mockdata } from 'config/profileConfig';
 
 const Profile = () => {
-  const { t } = useTranslation();
   const [active, setActive] = useState(0);
+  const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    navigate(mockdata[0].route);
+  }, [navigate]);
 
   const mainItems = mockdata.map((item, index) => (
     <Link

@@ -1,0 +1,28 @@
+.chevron {
+  display: none;
+}
+
+.control:hover {
+  background-color: transparent;
+}
+
+.item {
+  border-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  border-radius: var(--mantine-radius-xl);
+  position: relative;
+  z-index: 0;
+
+  &[data-active] {
+    transform: scale(1.03);
+    z-index: 1;
+    border-top: 1px solid transparent;
+    background-color: var(--mantine-color-body);
+    border-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+    box-shadow: var(--mantine-shadow-md);
+    border-radius: var(--mantine-radius-xl);
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-6)
+    );
+  }
+}

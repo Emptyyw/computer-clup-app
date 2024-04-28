@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Stack } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 import classes from './NavBar.module.css';
-import { RoutePaths } from 'Enum/Enum';
+import { Role, RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { persistor, useAppDispatch } from 'store/store';
 import { logout } from 'redux/slice/userSlice';
@@ -16,7 +16,7 @@ export const Navbar = () => {
   const location = useLocation();
 
   const auth = useAppSelector(getUser);
-  const isAdmin = auth && auth.role === 'admin';
+  const isAdmin = auth && auth.role === Role.ADMIN_ROLE;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -35,26 +35,28 @@ export const Navbar = () => {
     }
   };
 
-  const links = mockdata
-    .filter(link => link.label !== 'Security' || isAdmin)
-    .map(link => (
-      <NavActive
-        {...link}
-        key={link.label}
-        active={location.pathname === link.route}
-        onClick={() => navigate(link.route)}
-      />
-    ));
-
   return (
     <>
       <div className={classes.navbarMain}>
-        <Stack justify="center" gap={0}>
-          {links}
+        <Stack align="center" justify="center" gap={0}>
+          {mockdata
+            .filter(link => {
+              return (
+                !link.requiredRole || (isAdmin && link.requiredRole === Role.ADMIN_ROLE)
+              );
+            })
+            .map(link => (
+              <NavActive
+                {...link}
+                key={link.label}
+                active={location.pathname === link.route}
+                onClick={() => navigate(link.route)}
+              />
+            ))}
         </Stack>
       </div>
 
-      <Stack justify="center" gap={0}>
+      <Stack align="center" justify="center" gap={0}>
         <NavActive icon={IconLogout} label="Logout" onClick={handleLogout} />
       </Stack>
     </>

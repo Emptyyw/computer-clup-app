@@ -10,6 +10,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+
 import {
   deleteObject,
   getDownloadURL,
@@ -32,7 +33,7 @@ export interface User {
   id: string;
   firstName?: string;
   lastName?: string;
-  phoneNum?: number;
+  phoneNum?: string;
   login: string;
   email: string;
   role: string;
@@ -113,17 +114,6 @@ export async function updateUserLogin(user: User, newLogin: string) {
   return updatedUser;
 }
 
-export async function updateUserProfile(user: User, firstName: string, lastName: string) {
-  const userDocRef = doc(db, 'users', user.id);
-  await updateDoc(userDocRef, {
-    lastName: lastName,
-    firstName: firstName,
-  });
-
-  const updatedUser = { ...user, lastName, firstName };
-  return updatedUser;
-}
-
 export async function uploadFile(user: User, file: File, userId: string) {
   try {
     const storageRef = ref(storage, `AvatarProfile/${userId}`);
@@ -186,3 +176,41 @@ export const searchFirestoreDbByField = async <T extends DocumentData>(
 
   return docData;
 };
+export async function getListUsers(): Promise<User[]> {
+  const usersCollectionRef = collection(db, 'users');
+  const querySnapshot = await getDocs(usersCollectionRef);
+  const userList: User[] = [];
+  querySnapshot.forEach(doc => {
+    userList.push({ id: doc.id, ...doc.data() } as User);
+  });
+  return userList;
+}
+
+export async function updateUserById(
+  userId: string,
+  updates: Partial<User>,
+): Promise<User | null> {
+  const userDocRef = doc(db, 'users', userId);
+  await updateDoc(userDocRef, updates);
+
+  const userDocSnapshot = await getDoc(userDocRef);
+  if (userDocSnapshot.exists()) {
+    const updatedUser = { id: userId, ...userDocSnapshot.data() } as User;
+    return updatedUser;
+  } else {
+    console.error(`User with ID ${userId} does not exist.`);
+    return null;
+  }
+}
+
+export async function getFirestoreUserById(userId: string): Promise<User | null> {
+  const userDocRef = doc(db, 'users', userId);
+  const userDocSnapshot = await getDoc(userDocRef);
+
+  if (userDocSnapshot.exists()) {
+    const userData = userDocSnapshot.data() as User;
+    return userData;
+  } else {
+    return null;
+  }
+}

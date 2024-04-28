@@ -67,7 +67,7 @@
   },
   "search": {
     "searchPlaceholder": "Search for users here...",
-    "emptyText" : "User not found"
+    "emptyText": "User not found"
   },
   "profile": {},
   "Teams": "Teams",
@@ -79,5 +79,23 @@
     "Your Name": "Your Name",
     "Your Last Name": "Your Last Name",
     "Submit": "Submit"
+  },
+
+  "editpage": {
+    "Enter user data": "Enter user data",
+    "Enter user name": "Enter a user name",
+    "Enter user last name": "Enter user last name",
+    "Enter user login": "Enter user login",
+    "Enter the user phone number": "Enter the user phone number",
+    "User ID": "Edit user ID",
+    "Submit": "Submit"
+  },
+  "clientpage": {
+    "Full name": "Full name",
+    "Login": "Login",
+    "Role": "Role",
+    "Email": "Email",
+    "Phone number": "Phone number",
+    "Balance": "Balance"
   }
 }
