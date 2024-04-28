@@ -6,6 +6,13 @@ import { useForm } from '@mantine/form';
 import { getUser } from 'redux/selectors/userSelectors';
 import { IProfileUpdateById, updateUser } from 'redux/slice/userSlice';
 
+type FormValues = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  login: string;
+};
+
 export const EditModalForm: FC = () => {
   const { t } = useTranslation();
 
@@ -21,12 +28,7 @@ export const EditModalForm: FC = () => {
     },
   });
 
-  const handleSubmitForm = (values: {
-    userId: string;
-    firstName: string;
-    lastName: string;
-    login: string;
-  }) => {
+  const handleSubmitForm = (values: FormValues) => {
     const updateData: IProfileUpdateById = {
       updates: {
         firstName: values.firstName,
@@ -37,6 +39,7 @@ export const EditModalForm: FC = () => {
     };
     dispatch(updateUser(updateData));
   };
+
   return (
     <form onSubmit={form.onSubmit(handleSubmitForm)}>
       <TextInput

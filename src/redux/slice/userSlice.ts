@@ -26,7 +26,7 @@ import { modals } from '@mantine/modals';
 
 export interface AuthState {
   user: User;
-  searchUser: User | null;
+  searchUser: User;
   searchUserResults: User[];
   role: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -46,7 +46,15 @@ const initialState: AuthState = {
     role: '',
     avatarUrl: '',
   },
-  searchUser: null,
+  searchUser: {
+    id: '',
+    firstName: '',
+    lastName: '',
+    login: '',
+    email: '',
+    role: '',
+    avatarUrl: '',
+  },
   searchUserResults: [],
   role: '',
   status: 'idle',

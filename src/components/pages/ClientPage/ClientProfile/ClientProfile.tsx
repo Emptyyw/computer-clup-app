@@ -43,20 +43,6 @@ const ClientProfile: FC = () => {
     navigate(mockdata[0].route);
   }, [navigate]);
 
-  const mainItems = mockdata.map((item, index) => (
-    <Link
-      to={item.route}
-      key={item.label}
-      className={classes.mainLink}
-      data-active={index === active || undefined}
-      onClick={() => {
-        setActive(index);
-      }}
-    >
-      {t(item.label)}
-    </Link>
-  ));
-
   if (!user) {
     return (
       <Flex p={150} gap="xs" justify="center" align="center">
@@ -71,6 +57,11 @@ const ClientProfile: FC = () => {
       children: <ModalForm user={user} />,
     });
   };
+
+  function handleClick(index: number) {
+    setActive(index);
+  }
+
   return (
     <>
       <Paper className={classes.wrapper}>
@@ -109,16 +100,27 @@ const ClientProfile: FC = () => {
             </Group>
           </Paper>
         </Group>
-        {isAdmin ? (
+
+        {isAdmin && (
           <ActionIcon onClick={handleModal} radius="lg" variant="subtle" size="xl">
             <IconSettings />
           </ActionIcon>
-        ) : null}
+        )}
       </Paper>
 
       <Box className={classes.links} visibleFrom="sm">
         <Group gap={0} justify="flex-start">
-          {mainItems}
+          {mockdata.map((item, index) => (
+            <Link
+              to={item.route}
+              key={item.label}
+              className={classes.mainLink}
+              data-active={index === active || undefined}
+              onClick={() => handleClick(index)}
+            >
+              {t(item.label)}
+            </Link>
+          ))}
         </Group>
       </Box>
       <div>

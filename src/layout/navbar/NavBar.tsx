@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Stack } from '@mantine/core';
 import { IconLogout } from '@tabler/icons-react';
 import classes from './NavBar.module.css';
-import { RoutePaths } from 'Enum/Enum';
+import { Role, RoutePaths } from 'Enum/Enum';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { persistor, useAppDispatch } from 'store/store';
 import { logout } from 'redux/slice/userSlice';
@@ -16,7 +16,7 @@ export const Navbar = () => {
   const location = useLocation();
 
   const auth = useAppSelector(getUser);
-  const isAdmin = auth && auth.role === 'admin';
+  const isAdmin = auth && auth.role === Role.ADMIN_ROLE;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -41,7 +41,9 @@ export const Navbar = () => {
         <Stack align="center" justify="center" gap={0}>
           {mockdata
             .filter(link => {
-              return !link.requiredRole || (isAdmin && link.requiredRole === 'admin');
+              return (
+                !link.requiredRole || (isAdmin && link.requiredRole === Role.ADMIN_ROLE)
+              );
             })
             .map(link => (
               <NavActive
