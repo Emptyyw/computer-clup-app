@@ -13,6 +13,7 @@ import { Error404 } from 'components/pages/Error404/Error404';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { PrivateRoutes } from 'routes/PrivateRoutes';
 import { AdminRoutes } from 'routes/AdminRoutes';
+import { ShopPage } from 'components/pages/ShopPage/ShopPage';
 
 export interface IRoute {
   path: string;
@@ -37,7 +38,11 @@ export const adminRoutes: IRoute[] = [
 
 export const privateRoutes: IRoute[] = [
   { path: RoutePaths.DASHBOARD_ROUTE, element: <Dashboard /> },
-  { path: RoutePaths.LOGIN_ROUTE, element: <Dashboard /> },
+  // { path: RoutePaths.LOGIN_ROUTE, element: <Dashboard /> },
+  {
+    path: RoutePaths.SHOP_ROUTE,
+    element: <ShopPage />,
+  },
   { path: RoutePaths.ERROR_404, element: <Error404 /> },
   {
     path: RoutePaths.PROFILE_ROUTE,

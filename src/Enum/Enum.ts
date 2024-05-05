@@ -23,11 +23,14 @@ export enum RoutePaths {
   PROFILE_FRIENDS_ROUTE = '/friends',
   PROFILE_STATISTICS_ROUTE = '/statistics',
   PROFILE_TEAMS_ROUTE = '/teams',
+  SHOP_ROUTE = '/shop',
   ERROR_404 = '/error-404',
 }
 
 export enum CollectionPaths {
   USERS = 'users',
+  CATEGORIES = 'categories',
+  PRODUCTS = 'products',
 }
 
 export enum Role {

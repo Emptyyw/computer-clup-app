@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import { useDispatch } from 'react-redux';
 
 import rootReducer from 'redux/slice/userSlice';
+import shopSlice from 'redux/slice/shop/shopSlice';
 
 const persistConfig = {
   key: 'root',
@@ -13,8 +14,13 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+const persistedShopReducer = persistReducer(persistConfig, shopSlice);
+
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: {
+    user: persistedReducer,
+    shop: persistedShopReducer,
+  },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
