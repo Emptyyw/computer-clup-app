@@ -19,7 +19,7 @@ import {
   searchFirestoreDbByField,
 } from 'api/db';
 import { RootState } from 'store/store';
-import { CollectionPaths } from 'Enum/Enum.ts';
+import { CollectionPaths } from 'Enum/Enum';
 
 export interface AuthState {
   user: User;
@@ -116,7 +116,7 @@ export const uploadAvatar = createAsyncThunk<string | IUserAvatarUploadResponse,
   async (file: File, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
     try {
-      const url = await uploadFile(state.user, file, state.user.id);
+      const url = await uploadFile(state.user.user, file, state.user.user.id);
       return url;
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error);
